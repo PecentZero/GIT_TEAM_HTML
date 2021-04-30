@@ -11,7 +11,7 @@
 
 using namespace std;
 using namespace cgicc;
-// registration parameter 
+// registration parameter
 // Username , Email , Password , ConfirmPassword
 
 
@@ -19,27 +19,26 @@ Cgicc formData;
 void Check_Element(form_iterator &f,const std::string name); // print parameter's value
 
 int main()
-{	
+{
    	cout << "<html>\n";
    	cout << "<head>\n";
   	cout << "<title>Text Area Data to CGI</title>\n";
  	cout << "</head>\n";
   	cout << "<body>\n";
 
-	form_iterator f_Username; // handling parameter getting by post method
-	form_iterator f_Email; 
-	form_iterator f_Password;
-	form_iterator f_ConfirmPassword;
+	form_iterator f_Username = formData.getElement("Username"); // handling parameter getting by post method
+	form_iterator f_Email = formData.getElement("Email");
+	form_iterator f_Password = formData.getElement("Password");
+	form_iterator f_ConfirmPassword = formData.getElement("ConfirmPassword");
 
 	Check_Element(f_Username,string("Username"));
-	Check_Element(f_Username,string("Email"));
-	Check_Element(f_Username,string("Password"));
-	Check_Element(f_Username,string("ConfirmPassword"));
+	Check_Element(f_Email,string("Email"));
+	Check_Element(f_Password,string("Password"));
+	Check_Element(f_ConfirmPassword,string("ConfirmPassword"));
 	
 	cout << "<br>\n";
 	cout <<"</body>\n";
 	cout <<"</html>\n";
-
 	return 0;
 }
 
