@@ -16,7 +16,7 @@ using namespace cgicc;
 
 
 Cgicc formData;
-void Check_Element(form_iterator &f,const std::string name); // print parameter's value
+void Check_Element(form_iterator &f,string name); // print parameter's value
 
 int main()
 {
@@ -42,11 +42,11 @@ int main()
 	return 0;
 }
 
-void Check_Element(form_iterator &f,const std::string name) // print parameter's value
+void Check_Element(form_iterator &f,string name) // print parameter's value
 { //also needed check space or valid value
 	if(!f->isEmpty() && f != (*formData).end()){
-	cout<<"<<p>"<< name <<":" <<**f<<"</p>"<<endl;
+	cout<<"<p>"<< name <<":" <<**f<<"</p>"<<endl;
 	}else{
-	cout <<"NO" <<name <<"entered" <<endl;
+	cout <<"<p> NO "<<name <<" entered</p>" <<endl;
 	}
 }
