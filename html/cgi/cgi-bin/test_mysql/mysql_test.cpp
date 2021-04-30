@@ -52,7 +52,7 @@ try {
  driver = get_driver_instance();
  con = driver->connect("localhost", "root", "root");
  /* Connect to the MySQL test database */
- con->setSchema("test");
+ con->setSchema("EXAMPLE_DB");
 
  stmt = con->createStatement();
  res = stmt->executeQuery("SELECT 'Hello World!' AS _message");

@@ -22,7 +22,7 @@ int main () {
    cout << "</head>\n";
    cout << "<body>\n";
 
-   form_iterator f_id = formData.getElement("id");  
+   form_iterator f_id = formData.getElement("Username");  
    if( !f_id->isEmpty() && f_id != (*formData).end()) {  
       cout << "id : " << **f_id << endl;  
    } else {
