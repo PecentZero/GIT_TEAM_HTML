@@ -20,10 +20,11 @@ void Check_Element(form_iterator &f,string name); // print parameter's value
 
 int main()
 {
+    cout << "Content-type:text/html\r\n\r\n";
    	cout << "<html>\n";
    	cout << "<head>\n";
-  	cout << "<title>Text Area Data to CGI</title>\n";
- 	cout << "</head>\n";
+  	cout << "<title>Testing Registration/title>\n";
+ 	  cout << "</head>\n";
   	cout << "<body>\n";
 
 	form_iterator f_Username = formData.getElement("Username"); // handling parameter getting by post method
@@ -35,7 +36,7 @@ int main()
 	Check_Element(f_Email,string("Email"));
 	Check_Element(f_Password,string("Password"));
 	Check_Element(f_ConfirmPassword,string("ConfirmPassword"));
-	
+
 	cout << "<br>\n";
 	cout <<"</body>\n";
 	cout <<"</html>\n";
