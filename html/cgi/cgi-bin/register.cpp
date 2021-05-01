@@ -24,7 +24,7 @@ using namespace cgicc;
 
 Cgicc formData;
 void Check_Element(form_iterator &f,string name); // print parameter's value
-string  trim_space(char*);// trim  front , back  space
+string  trim_space(string);// trim  front , back  space
 
 int main()
 {
@@ -51,7 +51,7 @@ int main()
 
  	username = trim_space(**f_Username);
  	email = trim_space(**f_Email);
-  password = trim_space(**f_Password);
+ 	 password = trim_space(**f_Password);
 
  try{
    sql::Driver *driver;
@@ -61,16 +61,16 @@ int main()
    sql::PreparedStatement *pstmt;
 
    driver = get_driver_instance();
-   con = dirver->connect("localhost","root","root");
+   con = driver->connect("localhost","root","root");
    con->setSchema("HTML_DB");
    string sql ="INSERT INTO user_auth(username,password) VALUES (?,SHA2(?))";
-   pstmt->con.prepareStatement(sql);
+   pstmt= con->prepareStatement(sql);
    pstmt->setString(1,username);
    pstmt->setString(2,password);
    pstmt->executeUpdate();
 
-   string sql ="INSERT INTO user_profile(username,email) VALUES (?,?)";
-   pstmt->con.prepareStatement(sql);
+   sql ="INSERT INTO user_profile(username,email) VALUES (?,?)";
+   pstmt=con->prepareStatement(sql);
    pstmt->setString(1,username);
    pstmt->setString(2,email);
    pstmt->executeUpdate();
@@ -78,12 +78,10 @@ int main()
 
  }catch (sql::SQLException &e) {
   cout << "# ERR: SQLException in " << __FILE__;
-  cout << "(" << __FUNCTION__ << ") on line " »
-     << __LINE__ << endl;
+  cout << "(" << __FUNCTION__ << ") on line >> " << __LINE__ << endl;
   cout << "# ERR: " << e.what();
   cout << " (MySQL error code: " << e.getErrorCode();
-  cout << ", SQLState: " << e.getSQLState() << »
-     " )" << endl;
+  cout << ", SQLState: " << e.getSQLState() <<">> "<< " )" << endl;
 }
 //success registration
  cout << "<script> alert(\"Success Registration\");"<<endl;
@@ -106,9 +104,8 @@ void Check_Element(form_iterator &f,string name) // print parameter's value
 
 
 
-string trim_space(char* temp_c)
+string trim_space(string temp)
 {
-   string temp = string(temp_c);
 
    int len,end;
    int start_end, end_start, i;
