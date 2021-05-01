@@ -11,9 +11,10 @@
 
 using namespace std;
 using namespace cgicc;
-
-int main () {
   Cgicc formData;
+  void Check_Element(form_iterator &f,string name);
+int main () {
+
 
   cout << "Content-type:text/html\r\n\r\n";
   cout << "<html>\n";
@@ -23,27 +24,22 @@ int main () {
   cout << "<body>\n";
 
 	form_iterator f_Username = formData.getElement("Username"); // handling parameter getting by post method
-  if(!f_Username->isEmpty() && f_Username != (*formData).end()){
-  cout<<"<p>"<< "Username" <<":" <<**f_Username<<"</p>"<<endl;
-  }else{
-  cout <<"<p> NO "<<"Username" <<" entered</p>" <<endl;
-  }
-//	form_iterator f_Email = formData.getElement("Email");
-//	form_iterator f_Password = formData.getElement("Password");
-	//form_iterator f_ConfirmPassword = formData.getElement("ConfirmPassword");
+  form_iterator f_Email = formData.getElement("Email");
+  form_iterator f_Password = formData.getElement("Password");
+  form_iterator f_ConfirmPassword = formData.getElement("ConfirmPassword");
 
-/*	Check_Element(f_Username,string("Username"));
+  Check_Element(f_Username,string("Username"));
 	Check_Element(f_Email,string("Email"));
 	Check_Element(f_Password,string("Password"));
 	Check_Element(f_ConfirmPassword,string("ConfirmPassword"));
-*/
+
 	cout << "<br>\n";
 	cout <<"</body>\n";
 	cout <<"</html>\n";
 	return 0;
 }
 
-/*void Check_Element(form_iterator &f,string name) // print parameter's value
+void Check_Element(form_iterator &f,string name) // print parameter's value
 { //also needed check space or valid value
 	if(!f->isEmpty() && f != (*formData).end()){
 	cout<<"<p>"<< name <<":" <<**f<<"</p>"<<endl;
@@ -51,4 +47,3 @@ int main () {
 	cout <<"<p> NO "<<name <<" entered</p>" <<endl;
 	}
 }
-*/

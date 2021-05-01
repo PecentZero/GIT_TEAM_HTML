@@ -23,7 +23,7 @@ int main()
     cout << "Content-type:text/html\r\n\r\n";
    	cout << "<html>\n";
    	cout << "<head>\n";
-  	cout << "<title>Testing Registration/title>\n";
+  	cout << "<title>Testing Registration</title>\n";
  	  cout << "</head>\n";
   	cout << "<body>\n";
 
