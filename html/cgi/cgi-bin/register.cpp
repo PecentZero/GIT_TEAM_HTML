@@ -70,7 +70,7 @@ int main()
        string sql ="SELECT * from user_auth where username = ?";
        pstmt= con->prepareStatement(sql);
        pstmt->setString(1,username);
-       res = pstmt->executeUpdate();
+       res = pstmt->executeQuery();
        if(!res) // error on username
        {
 
