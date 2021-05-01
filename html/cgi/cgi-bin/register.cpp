@@ -71,7 +71,7 @@ int main()
        pstmt= con->prepareStatement(sql);
        pstmt->setString(1,username);
        res = pstmt->executeQuery();
-       if(!res) // error on username
+       if(res->next()) // error on username
        {
 
       	delete res;
@@ -84,7 +84,7 @@ int main()
            pstmt= con->prepareStatement(sql);
            pstmt->setString(1,email);
            res = pstmt->executeQuery(); // store result
-               if(!res) // error on email
+               if(res->next()) // error on email
                {
             	    delete res;
             	    delete pstmt;
