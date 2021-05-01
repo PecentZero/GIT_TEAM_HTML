@@ -15,10 +15,8 @@ int main()
 {
 try{
 	sql::Driver *driver;
-	sql::connection *con;
+	sql::Connection *con;
 	sql::Statement *stmt;
-	sql::ResultSet *res;
-	sql::PreparedStatement *pstmt;
 
 	driver = get_driver_instance();
 	con = driver->connect("localhost","root","root");
