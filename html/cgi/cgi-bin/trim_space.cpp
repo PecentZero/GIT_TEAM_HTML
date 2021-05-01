@@ -5,7 +5,6 @@
 using namespace std;
 void trim_space(string &temp)
 {
-    int start = -1;
     int len,end;
     int start_end, end_start, i;
     len = temp.length();
@@ -31,9 +30,11 @@ void trim_space(string &temp)
 
 int main()
 {
-    string test = "  dfjds  sdhf sk fshj ";
+    string test;
 
+    cout << "enter stinrg " <<endl <<">>";
+	  getline(std::cin,test);
     trim_space(test);
-    cout << test;
+    cout << "RESULT :" << test <<endl;
     return 0;
 }
