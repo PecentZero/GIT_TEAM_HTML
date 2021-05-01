@@ -48,85 +48,85 @@ int main()
 		cout << "<script> alert(\"mismatch Password, ConfirmPassword\");" <<endl;
 		cout <<" history.back(); </script>";
 	}
-	
-
- 	
-	else{
-	username = trim_space(**f_Username);
- 	email = trim_space(**f_Email);
- 	 password = trim_space(**f_Password);
-
- try{
-   sql::Driver *driver;
-   sql::Connection *con;
-   sql::Statement *stmt;
-   sql::ResultSet *res;
-   sql::PreparedStatement *pstmt;
-
-   driver = get_driver_instance();
-   con = driver->connect("localhost","root","root");
-   con->setSchema("HTML_DB");
-  
-   string sql ="SELECT * from user_auth where username = ?";
-   pstmt= con->prepareStatement(sql);
-   pstmt->setString(1,username);
-   res = pstmt->executeUpdate();
-   if(!res) // means there already exists same username
-   {
-     
-	delete res;
-	delete pstmt;
-	cout << "<script> alert(\"There already exists same Username\");" <<endl;
-	cout <<" history.back(); </script>";
-   }
-   else{
-   string sql ="SELECT * from user_profile  where email = ?";
-    pstmt= con->prepareStatement(sql);
-   pstmt->setString(1,email);
-   res = pstmt->executeUpdate();
-   if(!res) // means there already exists same username
-   {
-     
-	delete res;
-	delete pstmt;
-	cout << "<script> alert(\"There already exists same email\");" <<endl;
-	cout <<" history.back(); </script>";
-   }
-else{
-   
-   string sql ="INSERT INTO user_auth(username,password) VALUES (?,SHA2(?,512))";
-   pstmt= con->prepareStatement(sql);
-   pstmt->setString(1,username);
-   pstmt->setString(2,password);
-   pstmt->executeUpdate();
-
-   sql ="INSERT INTO user_profile(username,email) VALUES (?,?)";
-   pstmt=con->prepareStatement(sql);
-   pstmt->setString(1,username);
-   pstmt->setString(2,email);
-   pstmt->executeUpdate();
-   delete pstmt;
-
- }catch (sql::SQLException &e) {
-  cout << "# ERR: SQLException in " << __FILE__;
-  cout << "(" << __FUNCTION__ << ") on line >> " << __LINE__ << endl;
-  cout << "# ERR: " << e.what();
-  cout << " (MySQL error code: " << e.getErrorCode();
-  cout << ", SQLState: " << e.getSQLState() <<">> "<< " )" << endl;
-}
-///success registration
- cout << "<script> alert(\"Success Registration\");"<<endl;
- cout << "location.href = \"../index.html\"</script>"<<endl;
-
-	cout << "<br>\n";
-	cout <<"</body>\n";
-
-	cout <<"</html>\n";
 
 
-}
-}
-}
+
+	else{ // none error on password checking
+  	username = trim_space(**f_Username);
+   	email = trim_space(**f_Email);
+   	password = trim_space(**f_Password);
+
+     try{
+       sql::Driver *driver;
+       sql::Connection *con;
+       sql::Statement *stmt;
+       sql::ResultSet *res;
+       sql::PreparedStatement *pstmt;
+
+       driver = get_driver_instance();
+       con = driver->connect("localhost","root","root");
+       con->setSchema("HTML_DB");
+
+       string sql ="SELECT * from user_auth where username = ?";
+       pstmt= con->prepareStatement(sql);
+       pstmt->setString(1,username);
+       res = pstmt->executeUpdate();
+       if(!res) // error on username
+       {
+
+      	delete res;
+      	delete pstmt;
+      	cout << "<script> alert(\"There already exists same Username\");" <<endl;
+      	cout <<" history.back(); </script>";
+         }
+       else{  //none error on username
+           string sql ="SELECT * from user_profile  where email = ?";
+           pstmt= con->prepareStatement(sql);
+           pstmt->setString(1,email);
+           res = pstmt->executeQuery(); // store result
+               if(!res) // error on email
+               {
+            	    delete res;
+            	    delete pstmt;
+            	    cout << "<script> alert(\"There already exists same email\");" <<endl;
+            	    cout <<" history.back(); </script>";
+               }
+                else { // none error on email
+
+                   string sql ="INSERT INTO user_auth(username,password) VALUES (?,SHA2(?,512))";
+                   pstmt= con->prepareStatement(sql);
+                   pstmt->setString(1,username);
+                   pstmt->setString(2,password);
+                   pstmt->executeUpdate();
+
+                   sql ="INSERT INTO user_profile(username,email) VALUES (?,?)";
+                   pstmt=con->prepareStatement(sql);
+                   pstmt->setString(1,username);
+                   pstmt->setString(2,email);
+                   pstmt->executeUpdate();
+                   delete pstmt;
+
+
+                   ///success registration There 's no error
+                    cout << "<script> alert(\"Success Registration\");"<<endl;
+                    cout << "location.href = \"../index.html\"</script>"<<endl;
+                    cout << "<br>\n";
+                    cout <<"</body>\n";
+                    cout <<"</html>\n";
+                     }
+            }
+
+
+
+          }catch (sql::SQLException &e) {
+               cout << "# ERR: SQLException in " << __FILE__;
+               cout << "(" << __FUNCTION__ << ") on line >> " << __LINE__ << endl;
+               cout << "# ERR: " << e.what();
+               cout << " (MySQL error code: " << e.getErrorCode();
+               cout << ", SQLState: " << e.getSQLState() <<">> "<< " )" << endl;
+          }
+
+    }
 	return 0;
 }
 
