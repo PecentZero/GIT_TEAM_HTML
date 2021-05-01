@@ -63,7 +63,7 @@ int main()
    driver = get_driver_instance();
    con = driver->connect("localhost","root","root");
    con->setSchema("HTML_DB");
-   string sql ="INSERT INTO user_auth(username,password) VALUES (?,SHA2(?))";
+   string sql ="INSERT INTO user_auth(username,password) VALUES (?,SHA2(?,512))";
    pstmt= con->prepareStatement(sql);
    pstmt->setString(1,username);
    pstmt->setString(2,password);
