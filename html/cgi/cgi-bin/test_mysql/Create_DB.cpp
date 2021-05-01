@@ -21,7 +21,7 @@ try{
 	driver = get_driver_instance();
 	con = driver->connect("localhost","root","root");
 	stmt = con->createStatement();
-	stmt -> execute("Create Table test");
+	stmt -> execute("Create Database test");
 	cout << "Create Table test";
 	delete stmt;
 	delete con;
