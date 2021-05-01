@@ -83,9 +83,9 @@ int main()
   cout << " (MySQL error code: " << e.getErrorCode();
   cout << ", SQLState: " << e.getSQLState() <<">> "<< " )" << endl;
 }
-//success registration
+///success registration
  cout << "<script> alert(\"Success Registration\");"<<endl;
- cout << "location.href = \"localhost/index.html\"</script>"<<endl;
+ cout << "location.href = \"../index.html\"</script>"<<endl;
 
 	cout << "<br>\n";
 	cout <<"</body>\n";
