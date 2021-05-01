@@ -46,10 +46,13 @@ int main()
 	if(**f_Password != **f_ConfirmPassword) //alert error message and back to prior page
 	{
 		cout << "<script> alert(\"mismatch Password, ConfirmPassword\");" <<endl;
-		cout <<" history.back(); <</script>";
+		cout <<" history.back(); </script>";
 	}
+	
 
- 	username = trim_space(**f_Username);
+ 	
+	else{
+	username = trim_space(**f_Username);
  	email = trim_space(**f_Email);
  	 password = trim_space(**f_Password);
 
@@ -63,6 +66,34 @@ int main()
    driver = get_driver_instance();
    con = driver->connect("localhost","root","root");
    con->setSchema("HTML_DB");
+  
+   string sql ="SELECT * from user_auth where username = ?";
+   pstmt= con->prepareStatement(sql);
+   pstmt->setString(1,username);
+   res = pstmt->executeUpdate();
+   if(!res) // means there already exists same username
+   {
+     
+	delete res;
+	delete pstmt;
+	cout << "<script> alert(\"There already exists same Username\");" <<endl;
+	cout <<" history.back(); </script>";
+   }
+   else{
+   string sql ="SELECT * from user_profile  where email = ?";
+    pstmt= con->prepareStatement(sql);
+   pstmt->setString(1,email);
+   res = pstmt->executeUpdate();
+   if(!res) // means there already exists same username
+   {
+     
+	delete res;
+	delete pstmt;
+	cout << "<script> alert(\"There already exists same email\");" <<endl;
+	cout <<" history.back(); </script>";
+   }
+else{
+   
    string sql ="INSERT INTO user_auth(username,password) VALUES (?,SHA2(?,512))";
    pstmt= con->prepareStatement(sql);
    pstmt->setString(1,username);
@@ -89,7 +120,13 @@ int main()
 
 	cout << "<br>\n";
 	cout <<"</body>\n";
+
 	cout <<"</html>\n";
+
+
+}
+}
+}
 	return 0;
 }
 
