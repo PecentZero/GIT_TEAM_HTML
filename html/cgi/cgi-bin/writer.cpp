@@ -108,7 +108,7 @@ string trim_space(string temp)
 
 string make_filename (sql::Connection *con,string temp_filename)  // check If there is same file name
 {
-
+  string path ="uploads/";
 	string filename=temp_filename;
 	sql::ResultSet *res;
 	sql::PreparedStatement *pstmt;
@@ -117,7 +117,7 @@ string make_filename (sql::Connection *con,string temp_filename)  // check If th
 	while(1){
 	string sql ="SELECT * from post_content where content_img = ?";
   pstmt= con->prepareStatement(sql);
-  pstmt->setString(1,filename);
+  pstmt->setString(1,path+filename);
   res = pstmt->executeQuery();
   if(!(res->next())) //  file name is unique
 	break;
