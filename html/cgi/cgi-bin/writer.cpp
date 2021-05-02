@@ -152,6 +152,7 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_fil
 	content_text  = **f_description;
   if(Check_file_Element(f_file))
 	content_img = make_filename(con,f_file->getFilename());
+		cout << "<script> alert("<<content_img <<");" << endl;
 
 
 	string sql ="INSERT INTO post_content (content_title,content_text,content_img,date_created,time_written) VALUES (?,?,?,CURDATE(),CURTIME())";
