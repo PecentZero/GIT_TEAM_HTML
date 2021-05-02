@@ -20,7 +20,8 @@ using namespace std;
 using namespace cgicc;
 
 
-bool Check_Element(form_iterator &f);
+bool Check_Element(form_iterator &);
+bool Check_file_Element(const_file_iterator &);
 string trim_space(string);
 string make_filename (sql::Connection *con,string temp_filename);
 void Insert_DB(form_iterator &, form_iterator &, const_file_iterator &);
@@ -29,27 +30,29 @@ void Insert_DB(form_iterator &, form_iterator &, const_file_iterator &);
 Cgicc formData;
 int main() {
 	string author_id, content_title,content_text,content_img;
-	cout << "Content-type :text/html\r\n\r\n";
+  cout << "Content-type:text/html\r\n\r\n";
 	cout <<"<html>\n";
 	cout <<"<head>\n";
 	cout<<"<title>write</title>\n";
 	cout <<"</head>\n";
 	cout << "<body>\n";
 
+
 	form_iterator f_title = formData.getElement("title"); //get title element
 	form_iterator f_description = formData.getElement("description"); //get description element
 	const_file_iterator f_file = formData.getFile("myfile"); // get myfile element
 
-	if (Check_Element(f_title) &&  Check_Element(f_description) && f_file->getFilename()) // exist
+
+	if (Check_Element(f_title) &&  Check_Element(f_description) && Check_file_Element(f_file))//&& Check_file_Element(f_file)) // exist
 {
 	Insert_DB(f_title,f_description,f_file);
 	cout << "<script> alert(\"Success\");" << endl;
-	cout << "location.href=\"/index.html\" </script>"<<endl;
+	cout << "location.href=\"/index.html\"; </script>"<<endl;
 }
 else
 {
 	cout << "<script> alert(\"Fail\");" << endl;
-	cout << "location.href=\"/index.html\" </script>"<<endl;
+	cout << "location.href=\"/index.html\"; </script>"<<endl;
 
 }
 
@@ -68,6 +71,15 @@ bool Check_Element(form_iterator &f) // print parameter's value
 	if(!f->isEmpty() && f != (*formData).end()) return true;
 	else return false;
 }
+
+bool Check_file_Element(const_file_iterator &f) // print parameter's value
+{ //also needed check space or valid value
+
+	if(f ->getDataLength()) return true;
+	else return false;
+}
+
+
 
 
 string trim_space(string temp)
@@ -147,7 +159,7 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_fil
 	pstmt= con->prepareStatement(sql);
 	pstmt->setString(1,path+content_title);
 	pstmt->setString(2,content_text);
-	pstmt->setString(2,content_img);
+	pstmt->setString(3,content_img);
 	pstmt->executeUpdate();
 
 	delete pstmt;
