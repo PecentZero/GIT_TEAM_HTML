@@ -151,7 +151,6 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_fil
   if(Check_file_Element(f_file))
 {	content_img = make_filename(con,f_file->getFilename());
 
-	ofstream f_o((gloabalpath+path+content_img).c_str,ios::out|ios::binary);
   ofstream f_o((globalpath+path+content_img).c_str(),ios::out|ios::binary);
 	f_file->writeToStream(f_o);
   f_o.close();
