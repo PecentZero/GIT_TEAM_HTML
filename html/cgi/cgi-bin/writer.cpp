@@ -123,6 +123,7 @@ string make_filename (sql::Connection *con,string temp_filename)  // check If th
 	break;
 	srand(time(NULL));
 	filename += number[rand()%10];
+	delete res;
 }
 
 delete pstmt;
@@ -136,7 +137,7 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_fil
 {
 	string content_title, content_text,content_img;
 	string path ="uploads/";
-  string globalpath ="http://localhost/";
+  string globalpath ="../../";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
@@ -150,9 +151,10 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_fil
   if(Check_file_Element(f_file))
 {	content_img = make_filename(con,f_file->getFilename());
 
-   ofstream f_o(globalpath+path+content_img,ios::out||ios::binary);
-	 file->writeToStream(f_o);
-   f_o.close();
+	ofstream f_o((gloabalpath+path+content_img).c_str,ios::out|ios::binary);
+  ofstream f_o((globalpath+path+content_img).c_str(),ios::out|ios::binary);
+	f_file->writeToStream(f_o);
+  f_o.close();
 
 
 }
