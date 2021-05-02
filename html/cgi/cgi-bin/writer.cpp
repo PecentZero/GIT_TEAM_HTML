@@ -43,16 +43,16 @@ int main() {
 	const_file_iterator f_file = formData.getFile("myfile"); // get myfile element
 
 
-	if (Check_Element(f_title) &&  Check_Element(f_description))//&& Check_file_Element(f_file)) // exist
+	if (Check_Element(f_title) &&  Check_Element(f_description)&&Check_file_Element(f_file))//&& Check_file_Element(f_file)) // exist
 {
 	Insert_DB(f_title,f_description,f_file);
 	cout << "<script> alert(\"Success\");" << endl;
-	cout << "location.href=\"/index.html\"; </script>"<<endl;
+	cout << "location.href=\"../index.html\"; </script>"<<endl;
 }
 else
 {
-	cout << "<script> alert(\"Fail\");" << endl;
-	cout << "location.href=\"/index.html\"; </script>"<<endl;
+	cout << "<script> alert(\"Enter both title and contents\");" << endl;
+	cout << "location.href=\"../index.html\"; </script>"<<endl;
 
 }
 
@@ -74,13 +74,9 @@ bool Check_Element(form_iterator &f) // print parameter's value
 
 bool Check_file_Element(const_file_iterator &f) // print parameter's value
 { //also needed check space or valid value
-
-	if(f ->getDataLength()) return true;
+	if(f!= formData.getFiles().end()) return true;
 	else return false;
 }
-
-
-
 
 string trim_space(string temp)
 {
@@ -116,6 +112,7 @@ string make_filename (sql::Connection *con,string temp_filename)  // check If th
 	string filename=temp_filename;
 	sql::ResultSet *res;
 	sql::PreparedStatement *pstmt;
+	string number="0123456789";
 
 	while(1){
 	string sql ="SELECT * from post_content where content_img = ?";
@@ -125,7 +122,7 @@ string make_filename (sql::Connection *con,string temp_filename)  // check If th
   if(!(res->next())) //  file name is unique
 	break;
 	srand(time(NULL));
-	filename += (rand()%10);
+	filename += number[rand()%10];
 }
 
 delete pstmt;
@@ -152,7 +149,6 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_fil
 	content_text  = **f_description;
   if(Check_file_Element(f_file))
 	content_img = make_filename(con,f_file->getFilename());
-		cout << "<script> alert("<<content_img <<");" << endl;
 
 
 	string sql ="INSERT INTO post_content (content_title,content_text,content_img,date_created,time_written) VALUES (?,?,?,CURDATE(),CURTIME())";
