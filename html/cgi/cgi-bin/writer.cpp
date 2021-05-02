@@ -43,7 +43,7 @@ int main() {
 	const_file_iterator f_file = formData.getFile("myfile"); // get myfile element
 
 
-	if (Check_Element(f_title) &&  Check_Element(f_description)&&Check_file_Element(f_file))//&& Check_file_Element(f_file)) // exist
+	if (Check_Element(f_title) &&  Check_Element(f_description))//&& Check_file_Element(f_file)) // exist
 {
 	Insert_DB(f_title,f_description,f_file);
 	cout << "<script> alert(\"Success\");" << endl;
