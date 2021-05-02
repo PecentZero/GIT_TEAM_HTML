@@ -29,7 +29,6 @@ string  trim_space(string);// trim  front , back  space
 int main()
 {
    string username,password,email;
-   int option ; // option = 1  means success option = 0 means fail
 
     cout << "Content-type:text/html\r\n\r\n";
    	cout << "<html>\n";
@@ -59,7 +58,6 @@ int main()
      try{
        sql::Driver *driver;
        sql::Connection *con;
-       sql::Statement *stmt;
        sql::ResultSet *res;
        sql::PreparedStatement *pstmt;
 

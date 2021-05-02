@@ -3,6 +3,7 @@
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <cgicc/CgiDefs.h>  //for cgic programming
 #include <cgicc/Cgicc.h>
@@ -19,7 +20,7 @@ using namespace std;
 using namespace cgicc;
 
 string trim_space(string);
-
+string make_filename (sql::Connection *con,string temp_filename);
 
 int main() {
 	Cgicc formData;
@@ -32,11 +33,9 @@ int main() {
 	cout <<"</head>\n";
 	cout << "<body>\n";
 
-	form_iterator f_title = formData.getElemenet("title"); //get title element
+	form_iterator f_title = formData.getElement("title"); //get title element
 	form_iterator f_description = formData.getElement("description"); //get description element
 	const_file_iterator f_file = formData.getFile("myfile"); // get myfile element
-
-        trim_dat
 
 
 	sql::Driver *driver;
@@ -64,13 +63,15 @@ int main() {
 
 	cout << "<script> alert(\"success\");" << endl;
 	cout << "location.href=\"/index.html\" </script>";
-
+	cout << "<br>\n";
+	cout <<"</body>\n";
+	cout <<"</html>\n";
  return 0;
 
 
 }
 
-make_filename (sql::Connection &con,string temp_filename)  // check If there is same file name
+string make_filename (sql::Connection *con,string temp_filename)  // check If there is same file name
 {
 
 	string filename=temp_filename;
@@ -85,7 +86,7 @@ make_filename (sql::Connection &con,string temp_filename)  // check If there is 
   res = pstmt->executeQuery();
   if(!(res->next())) //  file name is unique
 	break;
-	srand(time_NULL);
+	srand(time(NULL));
 	filename += (rand()%10);
 }
 
