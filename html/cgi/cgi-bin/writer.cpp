@@ -43,7 +43,7 @@ int main() {
 	const_file_iterator f_file = formData.getFile("myfile"); // get myfile element
 
 
-	if (Check_Element(f_title) &&  Check_Element(f_description) && Check_file_Element(f_file))//&& Check_file_Element(f_file)) // exist
+	if (Check_Element(f_title) &&  Check_Element(f_description))//&& Check_file_Element(f_file)) // exist
 {
 	Insert_DB(f_title,f_description,f_file);
 	cout << "<script> alert(\"Success\");" << endl;
@@ -135,8 +135,6 @@ return filename;
 
 
 
-
-
 void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_file_iterator &f_file)
 {
 	string content_title, content_text,content_img;
@@ -152,17 +150,22 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_fil
 
 	content_title = trim_space(**f_title);
 	content_text  = **f_description;
+  if(Check_file_Element(f_file))
 	content_img = make_filename(con,f_file->getFilename());
 
 
 	string sql ="INSERT INTO post_content (content_title,content_text,content_img,date_created,time_written) VALUES (?,?,?,CURDATE(),CURTIME())";
 	pstmt= con->prepareStatement(sql);
-	pstmt->setString(1,path+content_title);
+	pstmt->setString(1,content_title);
 	pstmt->setString(2,content_text);
-	pstmt->setString(3,content_img);
+	if(Check_file_Element(f_file))
+	pstmt->setString(3,path+content_img);
+	else
+	pstmt->setString(3,"NULL");
 	pstmt->executeUpdate();
 
 	delete pstmt;
 	delete con;
+
 
 }
