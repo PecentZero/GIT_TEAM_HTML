@@ -20,7 +20,7 @@ cout << "	<div class=\"row\">\n";
 cout << "	    \n";
 cout << "	    <div class=\"col-md-8 col-md-offset-2\">\n";
 cout << "	        \n";
-cout << "    		<h1>Edit post</h1>\n";
+cout << "    		<h1>Edit Advertisement</h1>\n";
 cout << "    		\n";
 cout << "    		<form action=\"\" method=\"POST\">\n";
 cout << "    		    \n";
