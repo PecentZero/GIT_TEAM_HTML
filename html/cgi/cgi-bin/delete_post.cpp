@@ -25,7 +25,7 @@ bool Check_Element(form_iterator &f);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
 void delete_post(sql::Connection *con ,string session_cookie,string f_post_id);
 int main() {
-	string post_id, session_value,session_cookie,img_content;
+	string post_id, session_value,session_cookie;
   cout << "Content-type:text/html\r\n\r\n";
 	cout <<"<html>\n";
 	cout <<"<head>\n";
@@ -84,7 +84,7 @@ bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &want
 
 void delete_post(sql::Connection *con ,string session_cookie,string post_id)
 {//return img_content from post_content
-	string session_username, post_username,img_content;
+	string session_username, post_username,content_img;
 	string globalpath= "../../";
 	string alert_msg;
 	sql::ResultSet *res_session;
@@ -104,7 +104,7 @@ if(res_session->next()) // session exist
 	session_username = res_session->getString("username");
 	 delete res_session;
 
-	 string sql ="SELECT author_id,img_content from post_content where post_id = ?";
+	 string sql ="SELECT author_id,content_img from post_content where post_id = ?";
 	 pstmt= con->prepareStatement(sql);
 	 pstmt->setString(1,post_id);
    res_post_content = pstmt->executeQuery();
@@ -113,30 +113,30 @@ if(res_session->next()) // session exist
 			 {
 
 			      post_username = res_post_content->getString("author_id");
-						img_content = res_post_content->getString("img_content");
+						content_img = res_post_content->getString("img_content");
 
 						delete res_post_content;
 						delete pstmt;
 
 								if(session_username == post_username) //authentication
 										{
-											remove((globalpath+img_content).c_str()); //delete img file
+											remove((globalpath+content_img).c_str()); //delete img file
 
 											string sql ="DELETE * from post_content where post_id = ?";//delete record
 											pstmt= con->prepareStatement(sql);
 											pstmt->setString(1,post_id);
 										  pstmt->executeUpdate();
 											delete pstmt;
-											alert_msg += "Success in Deleting Post";
+											alert_msg = "Success in Deleting Post";
 
 										}
 
-									else alert_msg += "Permission Error"; 	//cout << "don't have permission"
+									else alert_msg = "Permission Error"; 	//cout << "don't have permission"
 			 }
-			else alert_msg += "No matching post";//cout << "no matching post"
+			else alert_msg = "No matching post";//cout << "no matching post"
 }
 
-else alert_msg += "no matching session |";//cout << "no matching session";
+else alert_msg = "no matching session";//cout << "no matching session";
 
 
 cout << "<script> alert("<<alert_msg<<");" <<endl;
