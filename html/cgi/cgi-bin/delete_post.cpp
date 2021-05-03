@@ -47,6 +47,12 @@ int main() {
 		delete_post(con ,session_cookie,**f_post_id);
 	}
 
+else{
+	cout << "<script> alert(\"Missing post_id or session\");" <<endl;
+	cout <<" history.back(); </script>";
+
+
+}
 
 	cout << "<br>\n";
 	cout <<"</body>\n";
