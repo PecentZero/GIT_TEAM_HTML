@@ -1,20 +1,26 @@
-Content-type:text/html
+#include <iostream>
 
 
+using namespace std;
+
+int main()
+{
+
+cout <<"Content-type:text/html\r\n\r\n";
 cout << "<html>";
 cout << "";
 cout << "<head>";
 cout << "";
-cout << "<link href=\"vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">";
-cout << "<link href=\"css/style_post_create.css\" rel=\"stylesheet\">";
-cout << " <link rel=\"stylesheet\" href=\"css/bootstrap.css\">";
-cout << "        <link rel=\"stylesheet\" href=\"vendors/linericon/style.css\">";
-cout << "        <link rel=\"stylesheet\" href=\"css/font-awesome.min.css\">";
-cout << "        <link rel=\"stylesheet\" href=\"vendors/lightbox/simpleLightbox.css\">";
-cout << "        <link rel=\"stylesheet\" href=\"vendors/nice-select/css/nice-select.css\">";
+cout << "<link href=\"../../vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">";
+cout << "<link href=\"../../css/style_post_create.css\" rel=\"stylesheet\">";
+cout << " <link rel=\"stylesheet\" href=\"../../css/bootstrap.css\">";
+cout << "        <link rel=\"stylesheet\" href=\"../../vendors/linericon/style.css\">";
+cout << "        <link rel=\"stylesheet\" href=\"../../css/font-awesome.min.css\">";
+cout << "        <link rel=\"stylesheet\" href=\"../../vendors/lightbox/simpleLightbox.css\">";
+cout << "        <link rel=\"stylesheet\" href=\"../../vendors/nice-select/css/nice-select.css\">";
 cout << "        <!-- main css -->";
-cout << "        <link rel=\"stylesheet\" href=\"css/style.css\">";
-cout << "        <link rel=\"stylesheet\" href=\"css/responsive.css\">";
+cout << "        <link rel=\"stylesheet\" href=\"../../css/style.css\">";
+cout << "        <link rel=\"stylesheet\" href=\"../../css/responsive.css\">";
 cout << "</head>";
 cout << "<body>";
 cout << "<div class=\"container\">";
@@ -24,7 +30,7 @@ cout << "	    <div class=\"col-md-8 col-md-offset-2\">";
 cout << "	        ";
 cout << "    		<h1>Create post</h1>";
 cout << "    		";
-cout << "    		<form enctype =\"multipart/form-data\" action=\"/cgi-bin/writer.cgi\" method=\"POST\">";
+cout << "    		<form enctype =\"multipart/form-data\" action=\"/writer.cgi\" method=\"POST\">";
 cout << "    		    ";
 cout << "    		    ";
 cout << "    		    ";
@@ -64,3 +70,7 @@ cout << "<!-- <script src=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstr
 cout << "<script src=\"//code.jquery.com/jquery-1.11.1.min.js\"></script> -->";
 cout << "</html>";
 cout << "";
+
+return 0;
+
+}
