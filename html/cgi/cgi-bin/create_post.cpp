@@ -1,3 +1,6 @@
+
+
+
 cout << "Content-type:text/html\r\n\r\n";
 cout << "<html>\n";
 cout << "\n";

@@ -159,7 +159,7 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_description , const_fil
 }
 
 
-	string sql ="INSERT INTO post_content (content_title,content_text,content_img,date_created,time_written) VALUES (?,?,?,CURDATE(),CURTIME())";
+	string sql ="INSERT INTO post_content (content_title,content_text,content_img,time_written) VALUES (?,?,?,NOW())";
 	pstmt= con->prepareStatement(sql);
 	pstmt->setString(1,content_title);
 	pstmt->setString(2,content_text);
