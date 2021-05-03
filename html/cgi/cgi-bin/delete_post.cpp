@@ -23,7 +23,7 @@ Cgicc formData;
 
 bool Check_Element(form_iterator &f);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
-void delete_post(sql::Connection *con ,string session_cookie,string f_post_id);
+void delete_post(string session_cookie,string f_post_id);
 int main() {
 	string post_id, session_value,session_cookie;
   cout << "Content-type:text/html\r\n\r\n";
@@ -39,12 +39,7 @@ int main() {
 &&   Check_Element(f_post_id))// exist session cookie , post id
 	{
 
-		sql::Driver *driver;
-		sql::Connection *con;
-		driver = get_driver_instance();
-		con = driver->connect("localhost","root","root");
-		con->setSchema("HTML_DB");
-		delete_post(con ,session_cookie,**f_post_id);
+		delete_post(session_cookie,**f_post_id);
 	}
 
 else{
@@ -82,11 +77,18 @@ bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &want
     return false;
 }
 
-void delete_post(sql::Connection *con ,string session_cookie,string post_id)
+void delete_post(string session_cookie,string post_id)
 {//return img_content from post_content
+
 	string session_username, post_username,content_img;
 	string globalpath= "../../";
 	string alert_msg;
+
+	sql::Driver *driver;
+	sql::Connection *con;
+	driver = get_driver_instance();
+	con = driver->connect("localhost","root","root");
+	con->setSchema("HTML_DB");
 	sql::ResultSet *res_session;
 	sql::ResultSet *res_post_content;
 	sql::PreparedStatement *pstmt;
@@ -113,7 +115,7 @@ if(res_session->next()) // session exist
 			 {
 
 			      post_username = res_post_content->getString("author_id");
-						content_img = res_post_content->getString("img_content");
+						content_img = res_post_content->getString("content_img");
 
 						delete res_post_content;
 						delete pstmt;
@@ -122,7 +124,7 @@ if(res_session->next()) // session exist
 										{
 											remove((globalpath+content_img).c_str()); //delete img file
 
-											string sql ="DELETE * from post_content where post_id = ?";//delete record
+											string sql ="DELETE from post_content where post_id = ?";//delete record
 											pstmt= con->prepareStatement(sql);
 											pstmt->setString(1,post_id);
 										  pstmt->executeUpdate();
@@ -138,8 +140,8 @@ if(res_session->next()) // session exist
 
 else alert_msg = "no matching session";//cout << "no matching session";
 
-
-cout << "<script> alert("<<alert_msg<<");" <<endl;
+delete con;
+cout << "<script> alert(\""<<alert_msg<<"\");" <<endl;
 cout <<" history.back(); </script>";
 
 }
