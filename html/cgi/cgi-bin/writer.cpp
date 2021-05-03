@@ -116,7 +116,7 @@ string make_filename (sql::Connection *con,string temp_filename)  // check If th
 	sql::PreparedStatement *pstmt;
 	string number="0123456789";
 
-if(filename == "NULL") filename = "NU";
+//if(filename == "NULL") filename = "NU";
 
 	while(1){
 	string sql ="SELECT * from post_content where content_img = ?";
@@ -153,30 +153,39 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_location ,form_iterator
 	content_title = trim_space(**f_title);
 	content_text  = **f_description;
 	location = **f_location;
-  if(Check_file_Element(f_file))
-{	content_img = make_filename(con,f_file->getFilename());
 
-  ofstream f_o((globalpath+path+content_img).c_str(),ios::out|ios::binary);
+if(Check_file_Element(f_file)){  //file attachement exists
+
+	content_img = make_filename(con,f_file->getFilename());
+
+	ofstream f_o((globalpath+path+content_img).c_str(),ios::out|ios::binary);
 	f_file->writeToStream(f_o);
-  f_o.close();
-
-
-}
+	f_o.close();
 
 
 	string sql ="INSERT INTO post_content (content_title,content_text,content_img,time_written,location) VALUES (?,?,?,NOW(),?)";
 	pstmt= con->prepareStatement(sql);
 	pstmt->setString(1,content_title);
 	pstmt->setString(2,content_text);
-	if(Check_file_Element(f_file))
 	pstmt->setString(3,path+content_img);
-	else
-	pstmt->setString(3,"NULL");
 	pstmt->setString(4,location);
 	pstmt->executeUpdate();
 
 	delete pstmt;
+}
+
+else{ //file attachement doesnot exist
+	string sql ="INSERT INTO post_content (content_title,content_text,time_written,location) VALUES (?,?,NOW(),?)";
+	pstmt= con->prepareStatement(sql);
+	pstmt->setString(1,content_title);
+	pstmt->setString(2,content_text);
+	pstmt->setString(3,location);
+	pstmt->executeUpdate();
+		delete pstmt;
+}
+
 	delete con;
+
 
 
 }

@@ -150,7 +150,7 @@ void load_post(string session_cookie,string post_id,string &content_title,string
 	string globalpath= "../../";
 	string alert_msg;
 
-	sql::Driver *driver;
+try{	sql::Driver *driver;
 	sql::Connection *con;
 	driver = get_driver_instance();
 	con = driver->connect("localhost","root","root");
@@ -195,13 +195,13 @@ if(res_session->next()) // session exist
 											pstmt->setString(1,post_id);
 										  res = pstmt->executeQuery();
 											delete pstmt;
-
+                      if(res_post_content->next()){
                       content_title = res->getString("content_title");
                       content_text  = res->getString("content_text");
                       location = res->getString("location");
                       delete res;
                       alert_msg ="Success loading";
-
+                      }
                     }
 
 									else alert_msg = "Permission Error"; 	//cout << "don't have permission"
@@ -213,7 +213,18 @@ if(res_session->next()) // session exist
 else alert_msg = "no matching session";//cout << "no matching session";
 
 delete con;
+
+
+}catch (sql::SQLException &e) {
+     cout << "# ERR: SQLException in " << __FILE__;
+     cout << "(" << __FUNCTION__ << ") on line >> " << __LINE__ << endl;
+     cout << "# ERR: " << e.what();
+     cout << " (MySQL error code: " << e.getErrorCode();
+     cout << ", SQLState: " << e.getSQLState() <<">> "<< " )" << endl;
+}
+
 cout << "<script> alert(\""<<alert_msg<<"\");" <<endl;
 cout <<"</script>"<<endl;
+
 
 }
