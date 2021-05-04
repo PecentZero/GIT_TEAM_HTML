@@ -21,6 +21,7 @@ using namespace cgicc;
 
 
 bool Check_Element(form_iterator &f,string msg);
+bool Check_ElementN(form_iterator &f);
 bool Check_file_Element(const_file_iterator &,string);
 string trim_space(string);
 string make_filename (sql::Connection *con,string temp_filename);
@@ -53,30 +54,32 @@ int main() {
 	form_iterator f_description = formData.getElement("description"); //get description element
 	const_file_iterator f_file = formData.getFile("myfile"); // get myfile element
 
-  form_iterator f_type = formData.getElement("type"); // for edit
 	form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
+  form_iterator f_type = formData.getElement("type"); // for edit
+
 
 	if (get_cookie_value(formData.getEnvironment(),session_name,session_value)&&Check_auth(session_value,username)&&Check_Element(f_title,"title") &&  Check_Element(f_description,"content") && Check_Element(f_location,"location"))//&& Check_file_Element(f_file)) // exist
 {
 
-	if(Check_Element(f_type,"type"))
+	if(Check_ElementN(f_type))
 	{
-		if(**f_type == string("update")){
-			if(Check_post_auth(**f_post_id,username))
-			 Update_DB(f_post_id,f_title,f_location,f_description,f_file);
+		if( **f_type == string("update")){
+			if(Check_Element(f_post_id,"post_id")&&Check_post_auth(**f_post_id,username))
+			{ Update_DB(f_post_id,f_title,f_location,f_description,f_file);
+
+		 }
 			}
 		else alert_msg ="type parameter error or post_id error";
 		}
 
-
-
-
-	}
-
 	else
 	Insert_DB(f_title,f_location,f_description,f_file,username);
+}
 
 cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
+if(**f_type == string("update"))
+cout <<" location.href = \"/cgi-bin/edit_post.cgi?post_id="<<trim_space(**f_post_id)<<"\" </script>\n";
+else
 cout <<" history.back(); </script>\n";
 cout << "<br>\n";
 cout <<"</body>\n";
@@ -91,6 +94,13 @@ bool Check_Element(form_iterator &f,string msg) // print parameter's value
 	if(!f->isEmpty() && f != (*formData).end()) return true;
 	else {
 		alert_msg = "missing " + msg;
+		return false;
+	}
+}
+bool Check_ElementN(form_iterator &f) // print parameter's value
+{ //also needed check space or valid value
+	if(!f->isEmpty() && f != (*formData).end()) return true;
+	else {
 		return false;
 	}
 }
@@ -234,6 +244,7 @@ void Update_DB(form_iterator &f_post_id ,form_iterator &f_title , form_iterator 
 	content_text  = **f_description;
 	location = **f_location;
 
+
 if(Check_file_Element(f_file,"file")){  //file modify
 
 	string sql ="select content_img from post_content where post_id = ?";
@@ -279,7 +290,8 @@ if(Check_file_Element(f_file,"file")){  //file modify
 
 	delete pstmt;
 
-
+	cout << "<script> alert(\""<<"wow"<<"\");\n" <<endl;
+	cout <<" location.href=\"/cgi-bin/edit_post.cgi?post_id="<<post_id<<"; </script>\n";
 
 
 }
@@ -296,8 +308,9 @@ else{ //keep prior file state
 }
 
 	delete con;
-
 }
+
+
 
 
 bool Check_auth(string session_value,string &username)

@@ -24,11 +24,13 @@ using namespace cgicc;
 Cgicc formData;
 
 bool Check_Element(form_iterator &f,string msg);
+bool Check_ElementN(form_iterator &f);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
 bool load_post(string post_id,string &content_title,string &content_text,string &content_img,string &location);
 void option_selected(string,string);
 bool Check_auth(string session_value,string &username);
 bool Check_post_auth(string post_id,string session_username);
+string trim_space(string temp);
 
 string alert_msg = "Success";
 int main()
@@ -47,7 +49,7 @@ int main()
   cout << "\n";
   cout << "<link href=\"../../vendors/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n";
   cout << "<link href=\"../../css/style_post_create.css\" rel=\"stylesheet\">\n";
-  cout << " <link rel=\"stylesheet\" href=\"../....bool Check_post_auth(string post_id,string session_username)/../css/bootstrap.css\">\n";
+  cout << " <link rel=\"stylesheet\" href=\"../../css/bootstrap.css\">\n";
   cout << "        <link rel=\"stylesheet\" href=\"../../vendors/linericon/style.css\">\n";
   cout << "        <link rel=\"stylesheet\" href=\"../../css/font-awesome.min.css\">\n";
   cout << "        <link rel=\"stylesheet\" href=\"../../vendors/lightbox/simpleLightbox.css\">\n";
@@ -59,10 +61,10 @@ int main()
   cout << "<body>\n";
 
   if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
-&&   Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
+&&   Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth((**f_post_id),username))// exist session cookie , post id
 	{
  		load_post(**f_post_id,content_title,content_text,content_img,location);
-		post_id = **f_post_id;
+		post_id = (**f_post_id);
 
   cout << "<div class=\"container\">\n";
   cout << "	<div class=\"row\">\n";
@@ -71,7 +73,7 @@ int main()
   cout << "	        \n";
   cout << "    		<h1>Edit post</h1>\n";
   cout << "    		\n";
-  cout << "    		<form action=\"create_post.cgi?post_id ="<<post_id<<"&type=update\" method=\"POST\">\n";
+  cout << "    		<form enctype =\"multipart/form-data\" action=\"create_post.cgi?post_id="<<trim_space(post_id)<<"&type=update&\" method=\"POST\">\n";
   cout << "    		    \n";
   cout << "    		    \n";
   cout << "    		    \n";
@@ -104,7 +106,8 @@ int main()
   cout << "    		    <div class=\"form-group\">\n";
 	cout << "           <button type=\"button\" class=\"btn btn-info\" onclick = window.open(\""<< global_path + content_img<<"\")>view attached_file</button>\n";
 	cout << "    		    \n";
-	cout << "           <button type=\"button\" class=\"btn btn-danger\" onclick = window.open(\"./delete_post.cgi?post_id"<<'='<<post_id<<"&type=delfile"<<"\")>Delete_file</button>\n";
+	//cout << "           <button type=\"button\" class=\"btn btn-danger\" onclick = window.open(\"./delete_post.cgi?post_id"<<'='<<post_id<<"&type=delfile"<<"\")>Delete_file</button>\n";
+	cout << "           <button type=\"button\" class=\"btn btn-danger\" onclick = window.open(\"./delete_post.cgi?post_id"<<'='<<trim_space(post_id)<<"&type=delfile"<<"\",\"_self\")>Delete_file</button>\n";
 	cout << "    		    \n";
 	cout << "    		    </div>\n";
 }
@@ -126,11 +129,7 @@ int main()
   cout << "\n";
 	}
 
-else{
 	cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
-	cout <<" history.back(); </script>\n";
-  }
-
 	cout << "</body>\n";
 	cout << "\n";
 	cout << "<!-- <script src=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js\"></script>\n";
@@ -156,6 +155,13 @@ bool Check_Element(form_iterator &f,string msg) // print parameter's value
 	if(!f->isEmpty() && f != (*formData).end()) return true;
 	else {
 		alert_msg = "missing " + msg;
+		return false;
+	}
+}
+bool Check_ElementN(form_iterator &f) // print parameter's value
+{ //also needed check space or valid value
+	if(!f->isEmpty() && f != (*formData).end()) return true;
+	else {
 		return false;
 	}
 }
@@ -275,4 +281,31 @@ bool load_post(string post_id,string &content_title,string &content_text,string 
 
 delete con;
 return false; //fail loaing
+}
+
+string trim_space(string temp)
+{
+
+   int len,end;
+   int start_end, end_start, i;
+   len = temp.length();
+   for (i = 0; i<len; i++)
+   {
+       if (temp[i] != ' ') break;    // i-1
+   }
+   start_end = i - 1;
+   if (start_end >= 0)
+       temp.replace(0, start_end + 1, "");
+
+   len = temp.length();
+   end = len;
+   for (i = len - 1; i >= 0; i--)
+   {
+       if (temp[i] != ' ') break;  // i+1
+   }
+   end_start = i + 1;
+   if (end_start < len)
+   temp.replace(end_start, end - end_start, "");
+   return temp;
+
 }

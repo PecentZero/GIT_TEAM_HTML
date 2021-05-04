@@ -22,13 +22,14 @@ using namespace cgicc;
 Cgicc formData;
 
 bool Check_Element(form_iterator &f,string msg);
+bool Check_ElementN(form_iterator &f);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
 void delete_post(string post_id);
 bool Check_auth(string session_value,string &username);
 bool Check_post_auth(string post_id,string session_username);
 void delete_file_DB(string post_id);
 
-string alert_msg = "Success Delete";
+string alert_msg = "Success";
 int main() {
 	string post_id,session_cookie;
 	string session_name,session_value,username;
@@ -45,9 +46,9 @@ int main() {
 	form_iterator f_type = formData.getElement("type"); // for edit
 
 	if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
-	&&Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
+	&&Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth((**f_post_id),username))// exist session cookie , post id
 	{
-		if(Check_Element(f_type,NULL))
+		if(Check_ElementN(f_type))
 		{
 			if(**f_type == string("delfile"))
 			delete_file_DB(**f_post_id);
@@ -58,6 +59,9 @@ int main() {
 	}
 
 	cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
+	if(alert_msg == "Success")
+	cout <<"location.href = \"/\"; </script>\n";
+	else
 	cout <<" history.back(); </script>\n";
 
 	cout << "<br>\n";
@@ -74,6 +78,14 @@ bool Check_Element(form_iterator &f,string msg) // print parameter's value
 	else {
 		if(!msg.empty())
 		alert_msg = "missing " + msg;
+		return false;
+	}
+}
+
+bool Check_ElementN(form_iterator &f) // print parameter's value
+{ //also needed check space or valid value
+	if(!f->isEmpty() && f != (*formData).end()) return true;
+	else {
 		return false;
 	}
 }
@@ -186,7 +198,7 @@ void delete_post(string post_id)
 						content_img = res->getString("content_img");
 						delete res;
 						delete pstmt;
-						if(content_img != string("NULL"))
+						if(!content_img.empty())
 						remove((globalpath+content_img).c_str()); //delete img file
 
 						string sql ="DELETE from post_content where post_id = ?";//delete record
