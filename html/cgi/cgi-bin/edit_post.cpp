@@ -30,7 +30,9 @@ int main()
 {
 	string post_id, session_value,session_cookie;
   string content_title,content_text,content_img, location;
+  string global_path = "/";
   form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
+
 
   cout << "Content-type:text/html\r\n\r\n";
   cout << "<html>\n";
@@ -63,7 +65,7 @@ int main()
   cout << "	        \n";
   cout << "    		<h1>Edit post</h1>\n";
   cout << "    		\n";
-  cout << "    		<form action=\"edit_post.cgi\" method=\"POST\">\n";
+  cout << "    		<form action=\"writer.cgi\" method=\"POST\">\n";
   cout << "    		    \n";
   cout << "    		    \n";
   cout << "    		    \n";
@@ -75,7 +77,7 @@ int main()
   cout << "                <div class=\"form-group\">\n";
   cout << "                    <label for=\"location\">Location<span class=\"require\">*</span></label>\n";
   cout << "                    <select class=\"form-control\" name=\"location\">\n";
-  cout << "                      <option value=\"SEOULT\">SEOUL</option>\n";
+  cout << "                      <option value=\"SEOUL\">SEOUL</option>\n";
   cout << "                      <option value=\"BUSAN\">BUSAN</option>\n";
   cout << "                      <option value=\"DAJEON\">DAJEON</option>\n";
   cout << "                    </select>\n";
@@ -84,14 +86,21 @@ int main()
   cout << "\n";
   cout << "    		    <div class=\"form-group\">\n";
   cout << "    		        <label for=\"description\">Description</label>\n";
-  cout << "    		        <textarea rows=\"5\" value=\""<<content_text<<"\" class=\"form-control\" name=\"description\" ></textarea>\n";
+  cout << "    		        <textarea rows=\"5\" class=\"form-control\" name=\"description\" >" <<content_text << "</textarea>\n";
   cout << "    		    </div>\n";
   cout << "    		    \n";
   cout << "    		    \n";
   cout << "    		    <div>\n";
   cout << "    		    	<input type=\"file\" id=\"myfile\" name=\"myfile\"><br><br>\n";
   cout << "    		    </div>\n";
+/*
+  if(content_img != string(NULL))  {
+  cout << "    		    <div class=\"form-group\">\n";
+  cout << "           <button class=\"btn btn-info\" onclick = window.open(\""<< global_path + content_img<<"\")>view attached_file</button>\n";
   cout << "    		    \n";
+  cout << "    		    </div>\n";
+}
+*/
   cout << "    		    <div class=\"form-group\">\n";
   cout << "    		        <button type=\"submit\" class=\"btn btn-primary\">\n";
   cout << "    		            Edit\n";
@@ -110,8 +119,8 @@ int main()
   }
 
   else{
-	cout << "<script> alert(\"Missing post_id or session\");" <<endl;
-	cout <<" history.back(); </script>";
+	cout << "<script> alert(\"Missing post_id or session\");\n" <<endl;
+	cout <<" history.back(); </script>\n";
   }
   cout << "</body>\n";
   cout << "\n";
@@ -150,7 +159,8 @@ void load_post(string session_cookie,string post_id,string &content_title,string
 	string globalpath= "../../";
 	string alert_msg;
 
-try{	sql::Driver *driver;
+//try{
+	sql::Driver *driver;
 	sql::Connection *con;
 	driver = get_driver_instance();
 	con = driver->connect("localhost","root","root");
@@ -173,7 +183,7 @@ if(res_session->next()) // session exist
 	session_username = res_session->getString("username");
 	 delete res_session;
 
-	 string sql ="SELECT author_id,content_img from post_content where post_id = ?";
+	 string sql ="SELECT author_id from post_content where post_id = ?";
 	 pstmt= con->prepareStatement(sql);
 	 pstmt->setString(1,post_id);
    res_post_content = pstmt->executeQuery();
@@ -182,7 +192,6 @@ if(res_session->next()) // session exist
 			 {
 
 			      post_username = res_post_content->getString("author_id");
-						content_img = res_post_content->getString("content_img");
 
 						delete res_post_content;
 						delete pstmt;
@@ -195,9 +204,10 @@ if(res_session->next()) // session exist
 											pstmt->setString(1,post_id);
 										  res = pstmt->executeQuery();
 											delete pstmt;
-                      if(res_post_content->next()){
-                      content_title = res->getString("content_title");
+                      if(res->next()){
+                      content_title = res->getString("content_text");
                       content_text  = res->getString("content_text");
+                      content_img = res->getString("content_img");
                       location = res->getString("location");
                       delete res;
                       alert_msg ="Success loading";
@@ -214,7 +224,7 @@ else alert_msg = "no matching session";//cout << "no matching session";
 
 delete con;
 
-
+/*
 }catch (sql::SQLException &e) {
      cout << "# ERR: SQLException in " << __FILE__;
      cout << "(" << __FUNCTION__ << ") on line >> " << __LINE__ << endl;
@@ -222,9 +232,10 @@ delete con;
      cout << " (MySQL error code: " << e.getErrorCode();
      cout << ", SQLState: " << e.getSQLState() <<">> "<< " )" << endl;
 }
+*/
 
-cout << "<script> alert(\""<<alert_msg<<"\");" <<endl;
-cout <<"</script>"<<endl;
+cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
+cout <<"</script>\n"<<endl;
 
 
 }
