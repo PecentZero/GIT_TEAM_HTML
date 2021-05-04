@@ -26,12 +26,15 @@ Cgicc formData;
 bool Check_Element(form_iterator &f);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
 void load_post(string session_cookie,string post_id,string &content_title,string &content_text,string &content_img,string &location);
+void option_selected(string,string);
 int main()
 {
-	string post_id, session_value,session_cookie;
+	string post_id, session_value,session_name;
   string content_title,content_text,content_img, location;
-  string global_path = "/";
+	session_name="session_id";
+	string global_path = "/";
   form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
+
 
   cout << "Content-type:text/html\r\n\r\n";
   cout << "<html>\n";
@@ -51,12 +54,12 @@ int main()
   cout << "</head>\n";
   cout << "<body>\n";
 
-  if(get_cookie_value(formData.getEnvironment(),string("session"),session_cookie)
+  if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
 &&   Check_Element(f_post_id))// exist session cookie , post id
 	{
 
 
-	 load_post(session_cookie,**f_post_id,content_title,content_text,content_img,location);//from DB file fetching
+	 load_post(session_value,**f_post_id,content_title,content_text,content_img,location);//from DB file fetching
 
   cout << "<div class=\"container\">\n";
   cout << "	<div class=\"row\">\n";
@@ -65,7 +68,7 @@ int main()
   cout << "	        \n";
   cout << "    		<h1>Edit post</h1>\n";
   cout << "    		\n";
-  cout << "    		<form action=\"writer_post.cgi?post_id ="<<post_id<<"&type=update\" method=\"POST\">\n";
+  cout << "    		<form action=\"writer.cgi?post_id ="<<post_id<<"&type=update\" method=\"POST\">\n";
   cout << "    		    \n";
   cout << "    		    \n";
   cout << "    		    \n";
@@ -77,15 +80,15 @@ int main()
   cout << "                <div class=\"form-group\">\n";
   cout << "                    <label for=\"location\">Location<span class=\"require\">*</span></label>\n";
   cout << "                    <select class=\"form-control\" name=\"location\">\n";
-  cout << "                      <option value=\"SEOUL\">SEOUL</option>\n";
-  cout << "                      <option value=\"BUSAN\">BUSAN</option>\n";
-  cout << "                      <option value=\"DAJEON\">DAJEON</option>\n";
+	option_selected("SEOUL",loation);
+	option_selected("BUSAN",location);
+	option_selected("DAJEON",location);
   cout << "                    </select>\n";
   cout << "                </div>\n";
   cout << "\n";
   cout << "\n";
   cout << "    		    <div class=\"form-group\">\n";
-  cout << "    		        <label for=\"description\">Description</label>\n";
+  cout << "								<label for=\"description\">Description</label>\n";
   cout << "    		        <textarea rows=\"5\" class=\"form-control\" name=\"description\" >" <<content_text << "</textarea>\n";
   cout << "    		    </div>\n";
   cout << "    		    \n";
@@ -130,6 +133,15 @@ int main()
 
 
 return 0;
+}
+
+void option_selected(string value,string check_value)
+{
+
+	if(value == check_value)
+   cout << "<option value=\""<<value<<"\" selected >"<<value<<"</option>\n";
+	else
+	 cout << "<option value=\""<<value<<"\" >"<<value<<"</option>\n";
 }
 
 bool Check_Element(form_iterator &f) // print parameter's value
