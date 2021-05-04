@@ -45,16 +45,16 @@ int main()
   cout << "\n";
   cout << "<head>\n";
   cout << "\n";
-  cout << "<link href=\"../../vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n";
-  cout << "<link href=\"../../css/style_post_create.css\" rel=\"stylesheet\">\n";
+  cout << "<link href=\"/vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n";
+  cout << "<link href=\"/css/style_post_create.css\" rel=\"stylesheet\">\n";
   cout << " <link rel=\"stylesheet\" href=\"..bool Check_post_auth(string post_id,string session_username)/../css/bootstrap.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"../../vendors/linericon/style.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"../../css/font-awesome.min.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"../../vendors/lightbox/simpleLightbox.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"../../vendors/nice-select/css/nice-select.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"/vendors/linericon/style.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"/css/font-awesome.min.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"/vendors/lightbox/simpleLightbox.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"/vendors/nice-select/css/nice-select.css\">\n";
   cout << "        <!-- main css -->\n";
-  cout << "        <link rel=\"stylesheet\" href=\"../../css/style.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"../../css/responsive.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"/css/style.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"/css/responsive.css\">\n";
   cout << "</head>\n";
   cout << "<body>\n";
 
@@ -249,8 +249,6 @@ delete con;
 bool Check_auth(string session_value,string &username)
 {
 
-		string post_username,session_username;
-
 		sql::Driver *driver;
 		sql::Connection *con;
 		sql::ResultSet *res;
@@ -269,15 +267,13 @@ bool Check_auth(string session_value,string &username)
 
 		if(res->next()) // session exist
 		{
-			session_username = res->getString("username");
+			username = res->getString("username");
 		 	delete res;
 			return true;
 		}
 		delete con;
-		alert_msg ="Permission error";
 		return false;
 }
-
 
 bool Check_post_auth(string post_id,string session_username)
 {
@@ -326,7 +322,7 @@ bool load_post(string post_id,string &content_title,string &content_text,string 
 	sql::Connection *con;
 	sql::ResultSet *res;
 	sql::PreparedStatement *pstmt;
-	
+
 	driver = get_driver_instance();
 	con = driver->connect("localhost","root","root");
 	con->setSchema("HTML_DB");

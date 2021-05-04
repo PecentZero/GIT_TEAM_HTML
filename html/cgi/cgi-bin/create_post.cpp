@@ -282,8 +282,6 @@ else{ //keep prior file state
 bool Check_auth(string session_value,string &username)
 {
 
-		string post_username,session_username;
-
 		sql::Driver *driver;
 		sql::Connection *con;
 		sql::ResultSet *res;
@@ -302,7 +300,7 @@ bool Check_auth(string session_value,string &username)
 
 		if(res->next()) // session exist
 		{
-			session_username = res->getString("username");
+			username = res->getString("username");
 		 	delete res;
 			return true;
 		}
