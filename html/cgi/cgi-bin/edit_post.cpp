@@ -102,11 +102,9 @@ int main()
 
   if(!content_img.empty()) {
   cout << "    		    <div class=\"form-group\">\n";
-  cout << "           <button type=\"button\" class=\"btn btn-info\" onclick = window.open(\""<< global_path + content_img<<"\")>view attached_file</button>\n";
-  cout << "    		    \n";
-  cout << "    		    </div>\n";
-	cout << "    		    <div class=\"form-group\">\n";
-	cout << "           <button type=\"button\" class=\"btn btn-danger\" onclick = location.href =\"create_post.cgi?post_id ="<<post_id<<"&type=delfile\">Delete_file</button>\n";
+	cout << "           <button type=\"button\" class=\"btn btn-info\" onclick = window.open(\""<< global_path + content_img<<"\")>view attached_file</button>\n";
+	cout << "    		    \n";
+	cout << "           <button type=\"button\" class=\"btn btn-danger\" onclick = window.open(\"./delete_post.cgi?post_id"<<'='<<post_id<<"&type=delfile"<<"\")>Delete_file</button>\n";
 	cout << "    		    \n";
 	cout << "    		    </div>\n";
 }

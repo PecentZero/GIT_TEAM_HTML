@@ -26,6 +26,7 @@ bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &want
 void delete_post(string post_id);
 bool Check_auth(string session_value,string &username);
 bool Check_post_auth(string post_id,string session_username);
+void delete_file_DB(string post_id);
 
 string alert_msg = "Success Delete";
 int main() {
@@ -41,10 +42,18 @@ int main() {
 
 
 	form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
-	if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
-	&&   Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
-	{
+	form_iterator f_type = formData.getElement("type"); // for edit
 
+	if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
+	&&Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
+	{
+		if(Check_Element(f_type,"type"))
+		{
+			if(**f_type == string("delfile"))
+			delete_file_DB(**f_post_id);
+			else alert_msg ="type parameter error";
+		}
+		else
 		delete_post(**f_post_id);
 	}
 
@@ -82,75 +91,6 @@ bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &want
     return false;
 }
 
-
-void delete_post(string session_cookie,string post_id)
-{//return img_content from post_content
-
-	string session_username, post_username,content_img;
-	string globalpath= "../../";
-	string alert_msg;
-
-	sql::Driver *driver;
-	sql::Connection *con;
-	driver = get_driver_instance();
-	con = driver->connect("localhost","root","root");
-	con->setSchema("HTML_DB");
-	sql::ResultSet *res_session;
-	sql::ResultSet *res_post_content;
-	sql::PreparedStatement *pstmt;
-
-
-//session
-string sql ="SELECT username from session where cookie = ?";
-pstmt= con->prepareStatement(sql);
-pstmt->setString(1,session_cookie);
-res_session = pstmt->executeQuery(); // store result
-
-if(res_session->next()) // session exist
-{
-
-	session_username = res_session->getString("username");
-	 delete res_session;
-
-	 string sql ="SELECT author_id,content_img from post_content where post_id = ?";
-	 pstmt= con->prepareStatement(sql);
-	 pstmt->setString(1,post_id);
-   res_post_content = pstmt->executeQuery();
-
-			 if(res_post_content->next()) // post exist
-			 {
-
-			      post_username = res_post_content->getString("author_id");
-						content_img = res_post_content->getString("content_img");
-
-						delete res_post_content;
-						delete pstmt;
-
-								if(session_username == post_username) //authentication
-										{
-											remove((globalpath+content_img).c_str()); //delete img file
-
-											string sql ="DELETE from post_content where post_id = ?";//delete record
-											pstmt= con->prepareStatement(sql);
-											pstmt->setString(1,post_id);
-										  pstmt->executeUpdate();
-											delete pstmt;
-											alert_msg = "Success in Deleting Post";
-
-										}
-
-									else alert_msg = "Permission Error"; 	//cout << "don't have permission"
-			 }
-			else alert_msg = "No matching post";//cout << "no matching post"
-}
-
-else alert_msg = "no matching session";//cout << "no matching session";
-
-delete con;
-cout << "<script> alert(\""<<alert_msg<<"\");" <<endl;
-cout <<" history.back(); </script>";
-
-}
 bool Check_auth(string session_value,string &username)
 {
 
@@ -219,6 +159,7 @@ bool Check_post_auth(string post_id,string session_username)
 			return false;
 }
 
+
 void delete_post(string post_id)
 {//return img_content from post_content
 
@@ -253,4 +194,50 @@ void delete_post(string post_id)
 					  pstmt->executeUpdate();
 						delete pstmt;
 				}
+
+}
+
+
+void delete_file_DB(string post_id)
+{
+	string delete_img; // should delete
+  string globalpath ="../../";
+	sql::Driver *driver;
+	sql::Connection *con;
+	sql::PreparedStatement *pstmt;
+	sql::ResultSet *res;
+	driver = get_driver_instance();
+	con = driver->connect("localhost","root","root");
+	con->setSchema("HTML_DB");
+
+
+	string sql ="select content_img from post_content where post_id = ?";
+	pstmt = con->prepareStatement(sql);
+	pstmt->setString(1,post_id);
+	res = pstmt->executeQuery();
+	res->next();
+	delete_img = res->getString("content_img");
+
+	delete pstmt;
+	delete res;
+
+	if(!delete_img.empty()) // prior file exists so should delete
+ {	remove((globalpath+delete_img).c_str()); //delete img file
+
+
+	sql = "Update post_content set content_img = NULL,time_written = NOW() where post_id = ?";
+	pstmt = con->prepareStatement(sql);
+	pstmt->setString(1,post_id);
+	pstmt->executeUpdate();
+
+	delete pstmt;
+	alert_msg ="Success Delete file";
+}
+
+
+else{ //keep prior file state
+alert_msg ="NO attached file";
+}
+
+	delete con;
 }

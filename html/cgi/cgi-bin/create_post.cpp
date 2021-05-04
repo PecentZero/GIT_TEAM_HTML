@@ -26,7 +26,6 @@ string trim_space(string);
 string make_filename (sql::Connection *con,string temp_filename);
 void Insert_DB(form_iterator &, form_iterator &, form_iterator &, const_file_iterator &,string);
 void Update_DB(form_iterator &,form_iterator &, form_iterator &, form_iterator &, const_file_iterator &);
-void Delete_file_DB(form_iterator &f_post_id);
 bool get_cookie_value(const CgiEnvironment &,string, string &);
 bool Check_auth(string session_value,string &username);
 bool Check_post_auth(string post_id,string session_username);
@@ -48,7 +47,7 @@ int main() {
 	cout << "<body>\n";
 
 
-	get_cookie_value(formData.getEnvironment(),session_name,session_value);
+
 	form_iterator f_title = formData.getElement("title"); //get title element
 	form_iterator f_location = formData.getElement("location"); //get location element
 	form_iterator f_description = formData.getElement("description"); //get description element
@@ -56,25 +55,20 @@ int main() {
 
   form_iterator f_type = formData.getElement("type"); // for edit
 	form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
-	if(Check_Element(f_type,"type") && **f_type == string("delfile") && Check_Element(f_post_id,"post_id") && Check_post_auth(**f_post_id,username))
-	{
-		Delete_file_DB(f_post_id);
-		Update_DB(f_post_id,f_title,f_location,f_description,f_file);
-	}
-	else if (Check_Element(f_title,"title") &&  Check_Element(f_description,"content") && Check_Element(f_location,"location")&& Check_auth(session_value,username))//&& Check_file_Element(f_file)) // exist
+
+	if (get_cookie_value(formData.getEnvironment(),session_name,session_value)&&Check_auth(session_value,username)&&Check_Element(f_title,"title") &&  Check_Element(f_description,"content") && Check_Element(f_location,"location"))//&& Check_file_Element(f_file)) // exist
 {
 
-	if(Check_Element(f_type,"type") && **f_type == string("update") && Check_Element(f_post_id,"post_id") && Check_post_auth(**f_post_id,username))
+	if(Check_Element(f_type,"type"))
 	{
-
+		if(**f_type == string("update") && Check_post_auth(**f_post_id,username))
 		Update_DB(f_post_id,f_title,f_location,f_description,f_file);
+		else alert_msg ="type parameter error";
 
 	}
 
-
-	else{
+	else
 	Insert_DB(f_title,f_location,f_description,f_file,username);
-}
 
 }
 
@@ -239,6 +233,26 @@ void Update_DB(form_iterator &f_post_id ,form_iterator &f_title , form_iterator 
 
 if(Check_file_Element(f_file,"file")){  //file modify
 
+	string sql ="select content_img from post_content where post_id = ?";
+	pstmt = con->prepareStatement(sql);
+	pstmt->setString(1,post_id);
+	res = pstmt->executeQuery();
+	res->next();
+	delete_img = res->getString("content_img");
+	delete pstmt;
+	delete res;
+	if(!delete_img.empty()) // prior file exists so should delete
+	{
+		remove((globalpath+delete_img).c_str()); //delete img file
+
+		sql = "Update post_content set content_img = NULL ,time_written = NOW() where post_id = ?";
+		pstmt = con->prepareStatement(sql);
+		pstmt->setString(1,post_id);
+		pstmt->executeUpdate();
+
+		delete pstmt;
+}
+
 	content_img = make_filename(con,f_file->getFilename());
 
 
@@ -248,18 +262,7 @@ if(Check_file_Element(f_file,"file")){  //file modify
 
 	//shoulld delete prior image if exists
 
-	string sql ="select content_img from post_content where post_id = ?";
-	pstmt = con->prepareStatement(sql);
-	pstmt->setString(1,post_id);
-	res = pstmt->executeQuery();
-	if(res->next())
-	{
-		delete_img = res->getString("content_img");
-	}
-	delete pstmt;
-	delete res;
-	if(delete_img != string("NULL")) // prior file exists so should delete
-	remove((globalpath+delete_img).c_str()); //delete img file
+
 
 
 	sql = "Update post_content set content_title = ? ,content_text = ?,content_img = ? ,time_written = NOW(),location = ? where post_id = ?";
@@ -288,55 +291,6 @@ else{ //keep prior file state
 	delete con;
 
 }
-
-
-
-
-void Delete_file_DB(form_iterator &f_post_id)
-{
-	string post_id = **f_post_id;
-	string delete_img; // should delete
-  string globalpath ="../../";
-	sql::Driver *driver;
-	sql::Connection *con;
-	sql::PreparedStatement *pstmt;
-	sql::ResultSet *res;
-	driver = get_driver_instance();
-	con = driver->connect("localhost","root","root");
-	con->setSchema("HTML_DB");
-
-
-	string sql ="select content_img from post_content where post_id = ?";
-	pstmt = con->prepareStatement(sql);
-	pstmt->setString(1,post_id);
-	res = pstmt->executeQuery();
-	res->next();
-	delete_img = res->getString("content_img");
-
-	delete pstmt;
-	delete res;
-
-	if(!delete_img.empty()) // prior file exists so should delete
- {	remove((globalpath+delete_img).c_str()); //delete img file
-
-
-	sql = "Update post_content set content_img = NULL,time_written = NOW() where post_id = ?";
-	pstmt = con->prepareStatement(sql);
-	pstmt->setString(1,post_id);
-	pstmt->executeUpdate();
-
-	delete pstmt;
-	alert_msg ="Success Delete file";
-}
-
-
-else{ //keep prior file state
-alert_msg ="NO attached file";
-}
-
-	delete con;
-}
-
 
 
 bool Check_auth(string session_value,string &username)
