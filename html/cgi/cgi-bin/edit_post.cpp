@@ -45,16 +45,16 @@ int main()
   cout << "\n";
   cout << "<head>\n";
   cout << "\n";
-  cout << "<link href=\"/vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n";
-  cout << "<link href=\"/css/style_post_create.css\" rel=\"stylesheet\">\n";
-  cout << " <link rel=\"stylesheet\" href=\"..bool Check_post_auth(string post_id,string session_username)/../css/bootstrap.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"/vendors/linericon/style.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"/css/font-awesome.min.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"/vendors/lightbox/simpleLightbox.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"/vendors/nice-select/css/nice-select.css\">\n";
+  cout << "<link href=\"../../vendors/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n";
+  cout << "<link href=\"../../css/style_post_create.css\" rel=\"stylesheet\">\n";
+  cout << " <link rel=\"stylesheet\" href=\"../....bool Check_post_auth(string post_id,string session_username)/../css/bootstrap.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"../../vendors/linericon/style.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"../../css/font-awesome.min.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"../../vendors/lightbox/simpleLightbox.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"../../vendors/nice-select/css/nice-select.css\">\n";
   cout << "        <!-- main css -->\n";
-  cout << "        <link rel=\"stylesheet\" href=\"/css/style.css\">\n";
-  cout << "        <link rel=\"stylesheet\" href=\"/css/responsive.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"../../css/style.css\">\n";
+  cout << "        <link rel=\"stylesheet\" href=\"../../css/responsive.css\">\n";
   cout << "</head>\n";
   cout << "<body>\n";
 
