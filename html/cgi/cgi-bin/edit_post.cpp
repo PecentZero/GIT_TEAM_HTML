@@ -33,7 +33,6 @@ int main()
   string global_path = "/";
   form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
 
-
   cout << "Content-type:text/html\r\n\r\n";
   cout << "<html>\n";
   cout << "\n";
@@ -56,6 +55,7 @@ int main()
 &&   Check_Element(f_post_id))// exist session cookie , post id
 	{
 
+
 	 load_post(session_cookie,**f_post_id,content_title,content_text,content_img,location);//from DB file fetching
 
   cout << "<div class=\"container\">\n";
@@ -65,7 +65,7 @@ int main()
   cout << "	        \n";
   cout << "    		<h1>Edit post</h1>\n";
   cout << "    		\n";
-  cout << "    		<form action=\"writer.cgi\" method=\"POST\">\n";
+  cout << "    		<form action=\"writer_post.cgi?post_id ="<<post_id<<"&type=update\" method=\"POST\">\n";
   cout << "    		    \n";
   cout << "    		    \n";
   cout << "    		    \n";
@@ -93,14 +93,14 @@ int main()
   cout << "    		    <div>\n";
   cout << "    		    	<input type=\"file\" id=\"myfile\" name=\"myfile\"><br><br>\n";
   cout << "    		    </div>\n";
-/*
-  if(content_img != string(NULL))  {
+
+  if(content_img != string("NULL")) {
   cout << "    		    <div class=\"form-group\">\n";
-  cout << "           <button class=\"btn btn-info\" onclick = window.open(\""<< global_path + content_img<<"\")>view attached_file</button>\n";
+  cout << "           <button type=\"button\" class=\"btn btn-info\" onclick = window.open(\""<< global_path + content_img<<"\")>view attached_file</button>\n";
   cout << "    		    \n";
   cout << "    		    </div>\n";
 }
-*/
+
   cout << "    		    <div class=\"form-group\">\n";
   cout << "    		        <button type=\"submit\" class=\"btn btn-primary\">\n";
   cout << "    		            Edit\n";

@@ -25,6 +25,7 @@ bool Check_file_Element(const_file_iterator &);
 string trim_space(string);
 string make_filename (sql::Connection *con,string temp_filename);
 void Insert_DB(form_iterator &, form_iterator &, form_iterator &, const_file_iterator &);
+void Update_DB(form_iterator &,form_iterator &, form_iterator &, form_iterator &, const_file_iterator &);
 
 
 Cgicc formData;
@@ -43,17 +44,26 @@ int main() {
 	form_iterator f_description = formData.getElement("description"); //get description element
 	const_file_iterator f_file = formData.getFile("myfile"); // get myfile element
 
+  form_iterator f_type = formData.getElement("type"); // for edit
+	form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
 
 	if (Check_Element(f_title) &&  Check_Element(f_description) && Check_Element(f_location))//&& Check_file_Element(f_file)) // exist
 {
+
+	if(Check_Element(f_type) && **f_type == string("update") && Check_Element(f_post_id))
+	{
+		Update_DB(f_post_id,f_title,f_location,f_description,f_file);
+	}
+	else{
 	Insert_DB(f_title,f_location,f_description,f_file);
-	cout << "<script> alert(\"Success\");" << endl;
-	cout << "location.href=\"../index.html\"; </script>"<<endl;
+}
+	cout << "<script> alert(\"Success\");\n" << endl;
+	cout << "location.href=\"../index.html\"; </script>\n"<<endl;
 }
 else
 {
-	cout << "<script> alert(\"Enter title ,location, contents  \");" << endl;
-	cout << "location.href=\"../index.html\"; </script>"<<endl;
+	cout << "<script> alert(\"Enter title ,location, contents  \");\n" << endl;
+	cout << "history.back(); </script>\n"<<endl;
 
 }
 
@@ -180,6 +190,76 @@ else{ //file attachement doesnot exist
 	pstmt->setString(1,content_title);
 	pstmt->setString(2,content_text);
 	pstmt->setString(3,location);
+	pstmt->executeUpdate();
+		delete pstmt;
+}
+
+	delete con;
+
+
+
+}
+
+
+void Update_DB(form_iterator &f_post_id ,form_iterator &f_title , form_iterator &f_location ,form_iterator &f_description , const_file_iterator &f_file)
+{
+	string content_title, content_text,content_img,location,post_id;
+	string delete_img; // should delete
+	string path ="uploads/";
+  string globalpath ="../../";
+	sql::Driver *driver;
+	sql::Connection *con;
+	sql::PreparedStatement *pstmt;
+	sql::ResultSet *res;
+	driver = get_driver_instance();
+	con = driver->connect("localhost","root","root");
+	con->setSchema("HTML_DB");
+
+  post_id = **f_post_id;
+	content_title = trim_space(**f_title);
+	content_text  = **f_description;
+	location = **f_location;
+
+if(Check_file_Element(f_file)){  //file modify
+
+	content_img = make_filename(con,f_file->getFilename());
+
+	ofstream f_o((globalpath+path+content_img).c_str(),ios::out|ios::binary);
+	f_file->writeToStream(f_o);
+	f_o.close();
+
+	//shoulld delete prior image if exists
+
+	string sql ="select content_img from post_content where post_id = ?";
+	pstmt = con->prepareStatement(sql);
+	pstmt->setString(1,post_id);
+	res = pstmt->executeQuery();
+	delete_img = res->getString("content_img");
+	delete pstmt;
+	delete res;
+	if(delete_img != string("NULL")) // prior file exists so should delete
+	remove((globalpath+delete_img).c_str()); //delete img file
+
+
+	sql = "Update post_content set content_title = ? ,content_text = ?,content_img = ? ,time_written = NOW(),location = ? where post_id = ?";
+	pstmt = con->prepareStatement(sql);
+	pstmt->setString(1,content_title);
+	pstmt->setString(2,content_text);
+	pstmt->setString(3,path+content_img);
+	pstmt->setString(4,location);
+	pstmt->setString(5,post_id);
+	pstmt->executeUpdate();
+
+	delete pstmt;
+}
+
+else{ //keep prior file state
+	string sql = "Update post_content set content_title = ?,content_text = ?,time_written = NOW(),location = ? where post_id = ?";
+	pstmt = con->prepareStatement(sql);
+	pstmt->setString(1,content_title);
+	pstmt->setString(2,content_text);
+	pstmt->setString(3,location);
+	pstmt->setString(4,post_id);
 	pstmt->executeUpdate();
 		delete pstmt;
 }
