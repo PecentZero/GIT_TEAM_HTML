@@ -125,7 +125,6 @@ int main()
 
 else{
 	cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
-	cout <<"</script>\n"<<endl;
 	cout <<" history.back(); </script>\n";
   }
 
@@ -172,80 +171,6 @@ bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &want
     return false;
 }
 
-void load_post(string session_cookie,string post_id,string &content_title,string &content_text,string &content_img,string &location)
-{//return img_content from post_content
-
-	string session_username, post_username;
-	string globalpath= "../../";
-	string alert_msg;
-
-//try{
-	sql::Driver *driver;
-	sql::Connection *con;
-	driver = get_driver_instance();
-	con = driver->connect("localhost","root","root");
-	con->setSchema("HTML_DB");
-  sql::ResultSet *res;
-	sql::ResultSet *res_session;
-	sql::ResultSet *res_post_content;
-	sql::PreparedStatement *pstmt;
-
-
-//session
-string sql ="SELECT username from session where cookie = ?";
-pstmt= con->prepareStatement(sql);
-pstmt->setString(1,session_cookie);
-res_session = pstmt->executeQuery(); // store result
-
-if(res_session->next()) // session exist
-{
-
-	session_username = res_session->getString("username");
-	 delete res_session;
-
-	 string sql ="SELECT author_id from post_content where post_id = ?";
-	 pstmt= con->prepareStatement(sql);
-	 pstmt->setString(1,post_id);
-   res_post_content = pstmt->executeQuery();
-
-			 if(res_post_content->next()) // post exist
-			 {
-
-			      post_username = res_post_content->getString("author_id");
-
-						delete res_post_content;
-						delete pstmt;
-
-								if(session_username == post_username) //authentication
-										{
-
-											string sql ="SELECT content_title,content_text,content_img,location from post_content where post_id = ?";//delete record
-											pstmt= con->prepareStatement(sql);
-											pstmt->setString(1,post_id);
-										  res = pstmt->executeQuery();
-											delete pstmt;
-                      if(res->next()){
-                      content_title = res->getString("content_text");
-                      content_text  = res->getString("content_text");
-                      content_img = res->getString("content_img");
-                      location = res->getString("location");
-                      delete res;
-                      alert_msg ="Success loading";
-                      }
-                    }
-
-									else alert_msg = "Permission Error"; 	//cout << "don't have permission"
-			 }
-        else alert_msg = "No matching post";//cout << "no matching post"
-
-     }
-
-else alert_msg = "no matching session";//cout << "no matching session";
-
-delete con;
-
-}
-
 
 bool Check_auth(string session_value,string &username)
 {
@@ -273,6 +198,7 @@ bool Check_auth(string session_value,string &username)
 			return true;
 		}
 		delete con;
+		alert_msg = "Try login again!";
 		return false;
 }
 
