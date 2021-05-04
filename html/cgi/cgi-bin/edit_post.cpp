@@ -80,7 +80,7 @@ int main()
   cout << "                <div class=\"form-group\">\n";
   cout << "                    <label for=\"location\">Location<span class=\"require\">*</span></label>\n";
   cout << "                    <select class=\"form-control\" name=\"location\">\n";
-	option_selected("SEOUL",loation);
+	option_selected("SEOUL",location);
 	option_selected("BUSAN",location);
 	option_selected("DAJEON",location);
   cout << "                    </select>\n";
