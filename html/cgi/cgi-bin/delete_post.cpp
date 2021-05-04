@@ -23,7 +23,7 @@ Cgicc formData;
 
 bool Check_Element(form_iterator &f,string msg);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
-void delete_post(string session_cookie,string f_post_id);
+void delete_post(string post_id);
 bool Check_auth(string session_value,string &username);
 bool Check_post_auth(string post_id,string session_username);
 
@@ -45,14 +45,11 @@ int main() {
 	&&   Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
 	{
 
-		delete_post(session_cookie,**f_post_id);
+		delete_post(**f_post_id);
 	}
 
 	cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
 	cout <<" history.back(); </script>\n";
-
-
-}
 
 	cout << "<br>\n";
 	cout <<"</body>\n";
@@ -222,29 +219,27 @@ bool Check_post_auth(string post_id,string session_username)
 			return false;
 }
 
-void delete_post(string session_cookie,string post_id)
+void delete_post(string post_id)
 {//return img_content from post_content
 
-	string session_username, post_username,content_img;
-	string globalpath= "../../";
-	string alert_msg;
+		string content_img;
+		string globalpath= "../../";
 
-	sql::Driver *driver;
-	sql::Connection *con;
-	driver = get_driver_instance();
-	con = driver->connect("localhost","root","root");
-	con->setSchema("HTML_DB");
-	sql::ResultSet *res;
-	sql::PreparedStatement *pstmt;
+		sql::Driver *driver;
+		sql::Connection *con;
+		sql::ResultSet *res;
+		sql::PreparedStatement *pstmt;
 
-
+		driver = get_driver_instance();
+		con = driver->connect("localhost","root","root");
+		con->setSchema("HTML_DB");
 
 	 string sql ="SELECT content_img from post_content where post_id = ?";
 	 pstmt= con->prepareStatement(sql);
 	 pstmt->setString(1,post_id);
-   res_post_content = pstmt->executeQuery();
+	 res = pstmt->executeQuery();
 
-			 if(res_post_content->next()) // post exist
+			 if(res->next()) // post exist
 			 {
 						content_img = res->getString("content_img");
 						delete res;
@@ -258,6 +253,4 @@ void delete_post(string session_cookie,string post_id)
 					  pstmt->executeUpdate();
 						delete pstmt;
 				}
-
-				return 0;
 }
