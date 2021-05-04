@@ -27,13 +27,14 @@ string make_filename (sql::Connection *con,string temp_filename);
 void Insert_DB(form_iterator &, form_iterator &, form_iterator &, const_file_iterator &,string);
 void Update_DB(form_iterator &,form_iterator &, form_iterator &, form_iterator &, const_file_iterator &);
 bool get_cookie_value(const CgiEnvironment &,string, string &);
-bool Check_auth(string,string,string&);
+bool Check_auth(string session_value,string &username);
+bool Check_post_auth(string post_id,string session_username);
 
 Cgicc formData;
 
 int main() {
 	string author_id,location, content_title,content_text,content_img;
-	string session_name,session_value,user_name;
+	string session_name,session_value,username;
 	session_name="session_id";
 
   cout << "Content-type:text/html\r\n\r\n";
@@ -52,17 +53,16 @@ int main() {
 
   form_iterator f_type = formData.getElement("type"); // for edit
 	form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
-
-	if (Check_Element(f_title) &&  Check_Element(f_description) && Check_Element(f_location))//&& Check_file_Element(f_file)) // exist
+	if (Check_Element(f_title) &&  Check_Element(f_description) && Check_Element(f_location)&& Check_auth(session_value,username))//&& Check_file_Element(f_file)) // exist
 {
 
-	if(Check_Element(f_type) && **f_type == string("update") && Check_Element(f_post_id) && Check_auth(**f_post_id,session_value,user_name))
+	if(Check_Element(f_type) && **f_type == string("update") && Check_Element(f_post_id) && Check_post_auth(**f_post_id,username))
 	{
 
 		Update_DB(f_post_id,f_title,f_location,f_description,f_file);
 	}
 	else{
-	Insert_DB(f_title,f_location,f_description,f_file,user_name);
+	Insert_DB(f_title,f_location,f_description,f_file,username);
 }
 	cout << "<script> alert(\"Success\");\n" << endl;
 	cout << "location.href=\"../index.html\"; </script>\n"<<endl;
@@ -133,7 +133,6 @@ string make_filename (sql::Connection *con,string temp_filename)  // check If th
 	sql::ResultSet *res;
 	sql::PreparedStatement *pstmt;
 	string number="0123456789";
-
 //if(filename == "NULL") filename = "NU";
 
 	while(1){
@@ -155,7 +154,7 @@ return filename;
 
 
 
-void Insert_DB(form_iterator &f_title , form_iterator &f_location ,form_iterator &f_description , const_file_iterator &f_file,string user_name)
+void Insert_DB(form_iterator &f_title , form_iterator &f_location ,form_iterator &f_description , const_file_iterator &f_file,string username)
 {
 	string content_title, content_text,content_img,location;
 	string path ="uploads/";
@@ -183,7 +182,7 @@ if(Check_file_Element(f_file)){  //file attachement exists
 
 	string sql ="INSERT INTO post_content (author_id,content_title,content_text,content_img,time_written,location) VALUES (?,?,?,?,NOW(),?)";
 	pstmt= con->prepareStatement(sql);
-	pstmt->setString(1,user_name);
+	pstmt->setString(1,username);
 	pstmt->setString(2,content_title);
 	pstmt->setString(3,content_text);
 	pstmt->setString(4,path+content_img);
@@ -196,7 +195,7 @@ if(Check_file_Element(f_file)){  //file attachement exists
 else{ //file attachement doesnot exist
 	string sql ="INSERT INTO post_content (author_id,content_title,content_text,time_written,location) VALUES (?,?,?,NOW(),?)";
 	pstmt= con->prepareStatement(sql);
-	pstmt->setString(1,user_name);
+	pstmt->setString(1,username);
 	pstmt->setString(2,content_title);
 	pstmt->setString(3,content_text);
 	pstmt->setString(4,location);
@@ -280,15 +279,14 @@ else{ //keep prior file state
 }
 
 
-bool Check_auth(string post_id,string session_value,string &user_name)
+bool Check_auth(string session_value,string &username)
 {
 
 		string post_username,session_username;
 
 		sql::Driver *driver;
 		sql::Connection *con;
-		sql::ResultSet *res_session;
-		sql::ResultSet *res_post_content;
+		sql::ResultSet *res;
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
@@ -299,38 +297,55 @@ bool Check_auth(string post_id,string session_value,string &user_name)
 		string sql ="SELECT username from session where cookie = ?";
 		pstmt= con->prepareStatement(sql);
 		pstmt->setString(1,session_value);
-		res_session = pstmt->executeQuery(); // store result
+		res = pstmt->executeQuery(); // store result
+		delete pstmt;
 
-		if(res_session->next()) // session exist
+		if(res->next()) // session exist
 		{
+			session_username = res->getString("username");
+		 	delete res;
+			return true;
+		}
+		delete con;
+		return false;
+}
 
-		session_username = res_session->getString("username");
-		 delete res_session;
 
-		 string sql ="SELECT author_id from post_content where post_id = ?";
-		 pstmt= con->prepareStatement(sql);
-		 pstmt->setString(1,post_id);
-		 res_post_content = pstmt->executeQuery();
+bool Check_post_auth(string post_id,string session_username)
+{
 
-				 if(res_post_content->next()) // post exist
+		string post_username;
+
+		sql::Driver *driver;
+		sql::Connection *con;
+		sql::ResultSet *res;
+		sql::PreparedStatement *pstmt;
+
+		driver = get_driver_instance();
+		con = driver->connect("localhost","root","root");
+		con->setSchema("HTML_DB");
+
+		string sql ="SELECT author_id from post_content where post_id = ?";
+		pstmt= con->prepareStatement(sql);
+		pstmt->setString(1,post_id);
+		res= pstmt->executeQuery();
+
+				 if(res->next()) // post exist
 				 {
 
-							post_username = res_post_content->getString("author_id");
+							post_username = res->getString("author_id");
 
-							delete res_post_content;
+							delete res;
 							delete pstmt;
 
 									if(session_username == post_username) //authentication
 									{
 										delete con;
-										user_name = session_username;
 									return true;
 								}
 						}
-
-		}
-		delete con;
-		return false;
+			delete con;
+			return false;
 }
 
 
