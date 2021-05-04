@@ -68,7 +68,7 @@ int main()
   cout << "	        \n";
   cout << "    		<h1>Edit post</h1>\n";
   cout << "    		\n";
-  cout << "    		<form action=\"writer.cgi?post_id ="<<post_id<<"&type=update\" method=\"POST\">\n";
+  cout << "    		<form action=\"create_post.cgi?post_id ="<<post_id<<"&type=update\" method=\"POST\">\n";
   cout << "    		    \n";
   cout << "    		    \n";
   cout << "    		    \n";
