@@ -27,7 +27,7 @@ string make_filename (sql::Connection *con,string temp_filename);
 void Insert_DB(form_iterator &, form_iterator &, form_iterator &, const_file_iterator &,string);
 void Update_DB(form_iterator &,form_iterator &, form_iterator &, form_iterator &, const_file_iterator &);
 bool get_cookie_value(const CgiEnvironment &,string, string &);
-bool check_auth(string,string,string&);
+bool Check_auth(string,string,string&);
 
 Cgicc formData;
 
@@ -56,10 +56,10 @@ int main() {
 	if (Check_Element(f_title) &&  Check_Element(f_description) && Check_Element(f_location))//&& Check_file_Element(f_file)) // exist
 {
 
-	if(Check_Element(f_type) && **f_type == string("update") && Check_Element(f_post_id) && Check_auth(**f_post_id,session_value))
+	if(Check_Element(f_type) && **f_type == string("update") && Check_Element(f_post_id) && Check_auth(**f_post_id,session_value,user_name))
 	{
 
-		Update_DB(f_post_id,f_title,f_location,f_description,f_file,user_name);
+		Update_DB(f_post_id,f_title,f_location,f_description,f_file);
 	}
 	else{
 	Insert_DB(f_title,f_location,f_description,f_file,user_name);
@@ -85,7 +85,7 @@ cout <<"</html>\n";
 }
 
 bool Check_Element(form_iterator &f) //	get_cookie_value(formData.getEnvironment(),session_name,session_value);
- print parameter's value
+ //print parameter's value
 { //also needed check space or valid value
 	if(!f->isEmpty() && f != (*formData).end()) return true;
 	else return false;
@@ -121,7 +121,6 @@ string trim_space(string temp)
    if (end_start < len)
    temp.replace(end_start, end - end_start, "");
    return temp;
-	get_cookie_value(formData.getEnvironment(),session_name,session_value);
 
 }
 
@@ -195,11 +194,12 @@ if(Check_file_Element(f_file)){  //file attachement exists
 }
 
 else{ //file attachement doesnot exist
-	string sql ="INSERT INTO post_content (content_title,content_text,time_written,location) VALUES (?,?,NOW(),?)";
+	string sql ="INSERT INTO post_content (author_id,content_title,content_text,time_written,location) VALUES (?,?,?,NOW(),?)";
 	pstmt= con->prepareStatement(sql);
-	pstmt->setString(1,content_title);
-	pstmt->setString(2,content_text);
-	pstmt->setString(3,location);
+	pstmt->setString(1,user_name);
+	pstmt->setString(2,content_title);
+	pstmt->setString(3,content_text);
+	pstmt->setString(4,location);
 	pstmt->executeUpdate();
 		delete pstmt;
 }
@@ -277,17 +277,16 @@ else{ //keep prior file state
 
 	delete con;
 
-
-
 }
 
 
-check_auth(string post_id,string session_value,string &user_name)
+bool Check_auth(string post_id,string session_value,string &user_name)
 {
+
+		string post_username,session_username;
 
 		sql::Driver *driver;
 		sql::Connection *con;
-		sql::ResultSet *res;
 		sql::ResultSet *res_session;
 		sql::ResultSet *res_post_content;
 		sql::PreparedStatement *pstmt;
@@ -324,18 +323,16 @@ check_auth(string post_id,string session_value,string &user_name)
 									if(session_username == post_username) //authentication
 									{
 										delete con;
-										user_name = sessioin_username;
+										user_name = session_username;
 									return true;
 								}
 						}
 
-
-		else {
-			delete con;
-			return false;
 		}
-
+		delete con;
+		return false;
 }
+
 
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value)
 {
