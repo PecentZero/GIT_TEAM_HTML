@@ -62,6 +62,7 @@ int main()
 &&   Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
 	{
  		load_post(**f_post_id,content_title,content_text,content_img,location);
+		post_id = **f_post_id;
 
   cout << "<div class=\"container\">\n";
   cout << "	<div class=\"row\">\n";
@@ -104,6 +105,10 @@ int main()
   cout << "           <button type=\"button\" class=\"btn btn-info\" onclick = window.open(\""<< global_path + content_img<<"\")>view attached_file</button>\n";
   cout << "    		    \n";
   cout << "    		    </div>\n";
+	cout << "    		    <div class=\"form-group\">\n";
+	cout << "           <button type=\"button\" class=\"btn btn-danger\" onclick = location.href =\"create_post.cgi?post_id ="<<post_id<<"&type=delfile\">Delete_file</button>\n";
+	cout << "    		    \n";
+	cout << "    		    </div>\n";
 }
 
   cout << "    		    <div class=\"form-group\">\n";
