@@ -61,16 +61,20 @@ int main() {
 
 	if(Check_Element(f_type,"type"))
 	{
-		if(**f_type == string("update") && Check_post_auth(**f_post_id,username))
-		Update_DB(f_post_id,f_title,f_location,f_description,f_file);
-		else alert_msg ="type parameter error";
+		if(**f_type == string("update")){
+			if(Check_post_auth(**f_post_id,username))
+			 Update_DB(f_post_id,f_title,f_location,f_description,f_file);
+			}
+		else alert_msg ="type parameter error or post_id error";
+		}
+
+
+
 
 	}
 
 	else
 	Insert_DB(f_title,f_location,f_description,f_file,username);
-
-}
 
 cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
 cout <<" history.back(); </script>\n";
@@ -95,7 +99,6 @@ bool Check_file_Element(const_file_iterator &f,string msg)
 { //also needed check space or valid value
 	if(f != formData.getFiles().end()) return true;
 	else {
-		alert_msg = "missing " + msg;
 		return false;
 	}
 }
@@ -275,6 +278,10 @@ if(Check_file_Element(f_file,"file")){  //file modify
 	pstmt->executeUpdate();
 
 	delete pstmt;
+
+
+
+
 }
 
 else{ //keep prior file state
@@ -356,8 +363,9 @@ bool Check_post_auth(string post_id,string session_username)
 										delete con;
 									return true;
 								}
+								else alert_msg ="No Permission";
 						}
-					alert_msg ="No matching post";
+
 			delete con;
 			return false;
 }

@@ -47,7 +47,7 @@ int main() {
 	if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
 	&&Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
 	{
-		if(Check_Element(f_type,"type"))
+		if(Check_Element(f_type,NULL))
 		{
 			if(**f_type == string("delfile"))
 			delete_file_DB(**f_post_id);
@@ -72,6 +72,7 @@ bool Check_Element(form_iterator &f,string msg) // print parameter's value
 { //also needed check space or valid value
 	if(!f->isEmpty() && f != (*formData).end()) return true;
 	else {
+		if(!msg.empty())
 		alert_msg = "missing " + msg;
 		return false;
 	}
