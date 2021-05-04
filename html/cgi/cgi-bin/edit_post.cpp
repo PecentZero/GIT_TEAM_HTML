@@ -23,7 +23,7 @@ using namespace cgicc;
 
 Cgicc formData;
 
-bool Check_Element(form_iterator &f);
+bool Check_Element(form_iterator &f,string msg);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
 bool load_post(string post_id,string &content_title,string &content_text,string &content_img,string &location);
 void option_selected(string,string);
@@ -59,7 +59,7 @@ int main()
   cout << "<body>\n";
 
   if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
-&&   Check_Element(f_post_id) && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
+&&   Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
 	{
  		load_post(**f_post_id,content_title,content_text,content_img,location);
 
@@ -126,8 +126,6 @@ int main()
 else{
 	cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
 	cout <<"</script>\n"<<endl;
-
-	cout << "<script> alert(\"Missing post_id or session\");\n" <<endl;
 	cout <<" history.back(); </script>\n";
   }
 
@@ -151,10 +149,13 @@ void option_selected(string value,string check_value)
 	 cout << "<option value=\""<<value<<"\" >"<<value<<"</option>\n";
 }
 
-bool Check_Element(form_iterator &f) // print parameter's value
+bool Check_Element(form_iterator &f,string msg) // print parameter's value
 { //also needed check space or valid value
 	if(!f->isEmpty() && f != (*formData).end()) return true;
-	else return false;
+	else {
+		alert_msg = "missing " + msg;
+		return false;
+	}
 }
 
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value)
