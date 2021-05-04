@@ -99,7 +99,7 @@ int main()
   cout << "    		    	<input type=\"file\" id=\"myfile\" name=\"myfile\"><br><br>\n";
   cout << "    		    </div>\n";
 
-  if(content_img != string("NULL")) {
+  if(!content_img.empty()) {
   cout << "    		    <div class=\"form-group\">\n";
   cout << "           <button type=\"button\" class=\"btn btn-info\" onclick = window.open(\""<< global_path + content_img<<"\")>view attached_file</button>\n";
   cout << "    		    \n";
