@@ -25,11 +25,15 @@ Cgicc formData;
 
 bool Check_Element(form_iterator &f);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
-void load_post(string session_cookie,string post_id,string &content_title,string &content_text,string &content_img,string &location);
+bool load_post(string post_id,string &content_title,string &content_text,string &content_img,string &location);
 void option_selected(string,string);
+bool Check_auth(string session_value,string &username);
+bool Check_post_auth(string post_id,string session_username);
+
+string alert_msg = "Success";
 int main()
 {
-	string post_id, session_value,session_name;
+	string post_id, session_value,session_name,username;
   string content_title,content_text,content_img, location;
 	session_name="session_id";
 	string global_path = "/";
@@ -43,7 +47,7 @@ int main()
   cout << "\n";
   cout << "<link href=\"../../vendor/bootstrap/css/bootstrap.min.css\" rel=\"stylesheet\">\n";
   cout << "<link href=\"../../css/style_post_create.css\" rel=\"stylesheet\">\n";
-  cout << " <link rel=\"stylesheet\" href=\"../../css/bootstrap.css\">\n";
+  cout << " <link rel=\"stylesheet\" href=\"..bool Check_post_auth(string post_id,string session_username)/../css/bootstrap.css\">\n";
   cout << "        <link rel=\"stylesheet\" href=\"../../vendors/linericon/style.css\">\n";
   cout << "        <link rel=\"stylesheet\" href=\"../../css/font-awesome.min.css\">\n";
   cout << "        <link rel=\"stylesheet\" href=\"../../vendors/lightbox/simpleLightbox.css\">\n";
@@ -55,11 +59,9 @@ int main()
   cout << "<body>\n";
 
   if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
-&&   Check_Element(f_post_id))// exist session cookie , post id
+&&   Check_Element(f_post_id) && Check_auth(session_value,username) && Check_post_auth(**f_post_id,username))// exist session cookie , post id
 	{
-
-
-	 load_post(session_value,**f_post_id,content_title,content_text,content_img,location);//from DB file fetching
+ 		load_post(**f_post_id,content_title,content_text,content_img,location);
 
   cout << "<div class=\"container\">\n";
   cout << "	<div class=\"row\">\n";
@@ -119,20 +121,25 @@ int main()
   cout << "	</div>\n";
   cout << "</div>\n";
   cout << "\n";
-  }
+	}
 
-  else{
+else{
+	cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
+	cout <<"</script>\n"<<endl;
+
 	cout << "<script> alert(\"Missing post_id or session\");\n" <<endl;
 	cout <<" history.back(); </script>\n";
   }
-  cout << "</body>\n";
-  cout << "\n";
-  cout << "<!-- <script src=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js\"></script>\n";
-  cout << "<script src=\"//code.jquery.com/jquery-1.11.1.min.js\"></script> -->\n";
-  cout << "</html>\n";
+
+	cout << "</body>\n";
+	cout << "\n";
+	cout << "<!-- <script src=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js\"></script>\n";
+	cout << "<script src=\"//code.jquery.com/jquery-1.11.1.min.js\"></script> -->\n";
+	cout << "</html>\n";
 
 
 return 0;
+
 }
 
 void option_selected(string value,string check_value)
@@ -160,7 +167,7 @@ bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &want
 					return true;
 				}
 			}
-
+		alert_msg = "Login First!";
     return false;
 }
 
@@ -236,18 +243,110 @@ else alert_msg = "no matching session";//cout << "no matching session";
 
 delete con;
 
-/*
-}catch (sql::SQLException &e) {
-     cout << "# ERR: SQLException in " << __FILE__;
-     cout << "(" << __FUNCTION__ << ") on line >> " << __LINE__ << endl;
-     cout << "# ERR: " << e.what();
-     cout << " (MySQL error code: " << e.getErrorCode();
-     cout << ", SQLState: " << e.getSQLState() <<">> "<< " )" << endl;
 }
-*/
-
-cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
-cout <<"</script>\n"<<endl;
 
 
+bool Check_auth(string session_value,string &username)
+{
+
+		string post_username,session_username;
+
+		sql::Driver *driver;
+		sql::Connection *con;
+		sql::ResultSet *res;
+		sql::PreparedStatement *pstmt;
+
+		driver = get_driver_instance();
+		con = driver->connect("localhost","root","root");
+		con->setSchema("HTML_DB");
+
+		//session
+		string sql ="SELECT username from session where cookie = ?";
+		pstmt= con->prepareStatement(sql);
+		pstmt->setString(1,session_value);
+		res = pstmt->executeQuery(); // store result
+		delete pstmt;
+
+		if(res->next()) // session exist
+		{
+			session_username = res->getString("username");
+		 	delete res;
+			return true;
+		}
+		delete con;
+		alert_msg ="Permission error";
+		return false;
+}
+
+
+bool Check_post_auth(string post_id,string session_username)
+{
+
+		string post_username;
+
+		sql::Driver *driver;
+		sql::Connection *con;
+		sql::ResultSet *res;
+		sql::PreparedStatement *pstmt;
+
+		driver = get_driver_instance();
+		con = driver->connect("localhost","root","root");
+		con->setSchema("HTML_DB");
+
+		string sql ="SELECT author_id from post_content where post_id = ?";
+		pstmt= con->prepareStatement(sql);
+		pstmt->setString(1,post_id);
+		res= pstmt->executeQuery();
+
+				 if(res->next()) // post exist
+				 {
+
+							post_username = res->getString("author_id");
+
+							delete res;
+							delete pstmt;
+
+									if(session_username == post_username) //authentication
+									{
+										delete con;
+									return true;
+								}
+						}
+					alert_msg ="No matching post";
+			delete con;
+			return false;
+}
+bool load_post(string post_id,string &content_title,string &content_text,string &content_img,string &location)
+{//return img_content from post_content
+
+	string globalpath= "../../";
+	string alert_msg;
+
+	sql::Driver *driver;
+	sql::Connection *con;
+	sql::ResultSet *res;
+	sql::PreparedStatement *pstmt;
+	
+	driver = get_driver_instance();
+	con = driver->connect("localhost","root","root");
+	con->setSchema("HTML_DB");
+
+
+	string sql ="SELECT content_title,content_text,content_img,location from post_content where post_id = ?";//delete record
+	pstmt= con->prepareStatement(sql);
+	pstmt->setString(1,post_id);
+  res = pstmt->executeQuery();
+	delete pstmt;
+  if(res->next()){
+  content_title = res->getString("content_text");
+  content_text  = res->getString("content_text");
+  content_img = res->getString("content_img");
+  location = res->getString("location");
+  delete res;
+	delete con;
+	return true; //success loading
+  }
+
+delete con;
+return false; //fail loaing
 }
