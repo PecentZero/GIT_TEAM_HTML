@@ -23,6 +23,7 @@ using namespace cgicc;
 bool Check_Element(form_iterator &f,string msg);
 bool Check_ElementN(form_iterator &f);
 bool Check_file_Element(const_file_iterator &,string);
+bool Check_img_file_Element(const_file_iterator &f,string msg);
 string trim_space(string);
 string make_filename (sql::Connection *con,string temp_filename);
 void Insert_DB(form_iterator &, form_iterator &, form_iterator &, const_file_iterator &,string);
@@ -38,6 +39,7 @@ string alert_msg ="Success";
 int main() {
 	string author_id,location, content_title,content_link,content_img; // content_link -> content_link
 	string session_name,session_value,username;
+  int option = 1 ; // 0 => go to root home , 1 -> history.back()  3-> edit page
 	session_name="session_id";
 
   cout << "Content-type:text/html\r\n\r\n";
@@ -58,7 +60,9 @@ int main() {
   form_iterator f_type = formData.getElement("type"); // for edit
 
 
-	if (get_cookie_value(formData.getEnvironment(),session_name,session_value)&&Check_auth(session_value,username)&&Check_Element(f_title,"title") &&  Check_Element(f_link,"link") && Check_Element(f_location,"location"))//&& Check_file_Element(f_file)) // exist
+	if (get_cookie_value(formData.getEnvironment(),session_name,session_value)&&Check_auth(session_value,username)&&
+  Check_Element(f_title,"title") &&  Check_Element(f_link,"link")
+   && Check_Element(f_location,"location")&&Check_img_file_Element(f_file,"img_file"))//&& Check_file_Element(f_file)) // exist
 {
 
 	if(Check_ElementN(f_type))
@@ -66,6 +70,7 @@ int main() {
 		if( **f_type == string("update")){
 			if(Check_Element(f_adv_id,"adv_id")&&Check_adv_auth(**f_adv_id,username))
 			{ Update_DB(f_adv_id,f_title,f_location,f_link,f_file);
+        option = 2;
 
 		 }
 			}
@@ -73,14 +78,20 @@ int main() {
 		}
 
 	else
-	Insert_DB(f_title,f_location,f_link,f_file,username);
+	{ Insert_DB(f_title,f_location,f_link,f_file,username);
+    option=0;
+  }
 }
 
 cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
-if(**f_type == string("update"))
-cout <<" location.href = \"/cgi-bin/edit_adv.cgi?adv_id="<<trim_space(**f_adv_id)<<"\" </script>\n";
-else
+if(option == 0) // go root
+cout << " location.href = \"/\"</script>\n";
+if(option == 1) //go back
 cout <<" history.back(); </script>\n";
+if(option == 2) //go edit
+cout <<" location.href = \"/cgi-bin/edit_adv.cgi?adv_id="<<trim_space(**f_adv_id)<<"\" </script>\n";
+else cout <<"</script>\n";
+
 cout << "<br>\n";
 cout <<"</body>\n";
 cout <<"</html>\n";
@@ -112,6 +123,25 @@ bool Check_file_Element(const_file_iterator &f,string msg)
 		return false;
 	}
 }
+bool Check_img_file_Element(const_file_iterator &f,string msg)
+{ //also needed check space or valid value
+  string filetype;
+	if(f != formData.getFiles().end()){
+      filetype = f->getDataType();
+      filetype = filetype.substr(0,5);
+
+      if(filetype.length() >= 5 && filetype == "image")
+        return true;
+      else alert_msg = "Not image file";
+
+  }
+else alert_msg = "No file";
+    return true;
+  alert_msg = "image file must be attached!";
+  return false;
+  }
+
+
 string trim_space(string temp)
 {
 
@@ -290,7 +320,7 @@ if(Check_file_Element(f_file,"file")){  //file modify
 
 	delete pstmt;
 
-	cout << "<script> alert(\""<<"wow"<<"\");\n" <<endl;
+	cout << "<script> alert(\""<<"Success"<<"\");\n" <<endl;
 	cout <<" location.href=\"/cgi-bin/edit_adv.cgi?adv_id="<<adv_id<<"; </script>\n";
 
 
