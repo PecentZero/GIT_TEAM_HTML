@@ -17,7 +17,14 @@
 #include <cgicc/HTTPHTMLHeader.h>
 #include <cgicc/HTMLClasses.h>
 
-#include "cookie.h"
+
+char* generate_random_string(int length);
+int check_overlap(char* random_string, sql::Connection *con);
+char* generate_cookie(int length, sql::Connection *con);
+char* session_check(char* cookie, sql::Connection *con);
+void create_session(char* cookie, char* username, sql::Connection *con);
+
+
 
 using namespace sql;
 using namespace std;
@@ -42,7 +49,7 @@ int main()
 	// create cgicc instance for cookie
 	Cgicc cgi;
 	const_cookie_iterator cci;
-	
+
 	// create a mysql connection
 	sql::Driver *driver;
 	sql::Connection *con;
@@ -67,7 +74,7 @@ int main()
 	}
 
 	// if already logged in
-	
+
 	// get the GET parameter for the city
 	char* city;
 	form_iterator fi = cgi.getElement("city");
@@ -87,7 +94,7 @@ int main()
 		// nothing specified for the post page
 		page = 1;
 	}
-	
+
 	cout << "Content-type:text/html\r\n\r\n";
 	cout << "<!doctype html>\n";
 	cout << "<html lang=\"en\">\n";
@@ -141,12 +148,12 @@ void printHeaderMenuArea()
     cout << "</button>\n";
     cout << "<div class=\"collapse navbar-collapse offset\" id=\"navbarSupportedContent\">\n";
     cout << "<ul class=\"nav navbar-nav menu_nav ml-auto\" style=\"height:80px\">\n";
-    cout << "<li class=\"nav-item \"><a class=\"nav-link\" href=\"index.html\">Home</a></li>\n"; 
-    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"profile.html\">My Profile</a></li>\n"; 
-    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"settings.html\">Settings</a></li>\n"; 
+    cout << "<li class=\"nav-item \"><a class=\"nav-link\" href=\"index.html\">Home</a></li>\n";
+    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"profile.html\">My Profile</a></li>\n";
+    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"settings.html\">Settings</a></li>\n";
     cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"login.html\">Log Out</a>\n";
     cout << "</ul>\n";
-    cout << "</div>\n"; 
+    cout << "</div>\n";
     cout << "</div>\n";
     cout << "</nav>\n";
     cout << "</div>\n";
@@ -217,7 +224,7 @@ void printEventsArea(char* city, int p_page, int a_page, sql::Connection *con)
         cout << "<div class=\"row\">\n";
         cout << "<div class=\"col-lg-8\">\n";
         cout << "<div class=\"blog_left_sidebar\">\n";
-	
+
 	sql::ResultSet *res_post;
 	sql::ResultSet *res_adv;
 	sql::ResultSet *res_post_count;
@@ -226,7 +233,7 @@ void printEventsArea(char* city, int p_page, int a_page, sql::Connection *con)
 	sql::PreparedStatement *pstmt_post_count;
 
 	// determine how many posts there are total for the city
-	int post_count;	
+	int post_count;
 	string sql_post_count = "select count(*) from posts where location=?";
 	pstmt_post_count = con->prepareStatement(sql_post_count);
 	pstmt_post_count->setString(1, city);
@@ -244,7 +251,7 @@ void printEventsArea(char* city, int p_page, int a_page, sql::Connection *con)
 		delete pstmt_post_count;
 		post_count = 0;
 	}
-	
+
 	int total_num_post_page = post_count / 10 + 1;
 	if (p_page > total_num_post_page) p_page = total_num_post_page;
 
@@ -269,7 +276,7 @@ void printEventsArea(char* city, int p_page, int a_page, sql::Connection *con)
 		char* title = strdup((res_post_count->getString("title")).c_str());
 		char* text = strdup((res_post_count->getString("text")).c_str());
 		makeArticle(author_id, dateTime, location, views, imgsrc, title, text);
-		
+
 		count++;
 	}
 
@@ -280,13 +287,13 @@ void printEventsArea(char* city, int p_page, int a_page, sql::Connection *con)
 	post_pagination(city, p_page, a_page, total_num_post_page, total_num_adv_page);
 
 	printUntilAdvertisementStart();
-	
+
 	// get the advertisement data from the DB in random order
 	string sql_adv = "SELECT * FROM advertisements where location=? order by rand()";
 	pstmt_adv = con->prepareStatement(sql_adv);
 	pstmt_adv->setString(1, city);
 	res_adv = pstmt_adv->executeQuery();
-	
+
 	count = 0;
 
 	// print maximum 10 advertisements
@@ -297,7 +304,7 @@ void printEventsArea(char* city, int p_page, int a_page, sql::Connection *con)
 		char* location = strdup((res_adv_count->getDatetime("location")).c_str());
 		char* title = strdup((res_adv_count->getString("title")).c_str());
 		char* link = strdup((res_adv_count->getString("link")).c_str());
-		
+
 		makeAdvertisement(title, imgsrc, link);
 
 		count++;
@@ -430,7 +437,7 @@ void post_pagination(char* city, int p_page, int a_page, int total_num_post_page
 
 void printFooterArea()
 {
-	cout << "<!--================ Start footer Area  =================-->\n";	
+	cout << "<!--================ Start footer Area  =================-->\n";
     cout << "<footer>\n";
 	cout << "<div class=\"footer-bottom\">\n";
     cout << "<div class=\"container\">\n";
@@ -443,7 +450,7 @@ void printFooterArea()
     cout << "</div>\n";
     cout << "</footer>\n";
     cout << "<!--================ End footer Area  =================-->\n";
- 
+
 	return;
 }
 
@@ -476,4 +483,3 @@ void redirectToLogin()
 
 	return;
 }
-
