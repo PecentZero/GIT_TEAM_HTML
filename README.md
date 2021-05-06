@@ -63,13 +63,13 @@ how to execute:
 
 8. configure "/var/www/html/uploads" and "/var/www/html/adv_uploads" directory's permissions so apache2 can create files in those directories.
       <enter below command >
-        chgrp -R www-data /var/www
-        mkdir /var/www/html/uploads
-        chmod 775 /var/www/html/uploads
-        umask 0002 /var/www/html/uploads
-        mkdir /var/www/html/adv_uploads
-        chmod 775 /var/www/html/adv_uploads
-        umask 0002 /var/www/html/adv_uploads
+       - chgrp -R www-data /var/www
+       -  mkdir /var/www/html/uploads
+       -  chmod 775 /var/www/html/uploads
+       -  umask 0002 /var/www/html/uploads
+       -  mkdir /var/www/html/adv_uploads
+       -  chmod 775 /var/www/html/adv_uploads
+       -  umask 0002 /var/www/html/adv_uploads
 
 9. go to "/var/www/cgi-bin" directory
     - cd /var/www/cgi-bin
