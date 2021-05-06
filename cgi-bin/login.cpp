@@ -73,7 +73,7 @@ int main()
 	strcat(query,"\',512)");
 
  stmt = con->createStatement();
-	res = pstmt->executeQuery();
+	res = stmt->executeQuery();
 	if (res->next())
 	{
 		sql::PreparedStatement *pstmt_del;
