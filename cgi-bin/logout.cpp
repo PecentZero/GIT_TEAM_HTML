@@ -30,6 +30,8 @@ void redirectToLogin();
 int main()
 {
 	// create cgicc instance for cookie
+	// get the cookie value
+	char* cookie[30];
 	Cgicc cgi;
 	const_cookie_iterator cci;
 
@@ -40,11 +42,10 @@ int main()
 	con = driver->connect("tcp://127.0.0.1:3306", "root", SQL_PASSWORD);
 	con->setSchema("HTML_DB");
 
-	// get the cookie value
-	char* cookie;
+
 	const CgiEnvironment& env = cgi.getEnvironment();
 	cci = env.getCookieList().begin();
-	cookie = strdup((cci->getValue()).c_str());
+	strcpy(cookie,strdup((cci->getValue()).c_str()));
 
 
 	// delete the session
