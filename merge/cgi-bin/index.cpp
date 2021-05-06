@@ -47,7 +47,7 @@ int main()
 	// create cgicc instance for cookie
 	Cgicc cgi;
 	const_cookie_iterator cci;
-	
+
 	// create a mysql connection
 	sql::Driver *driver;
 	sql::Connection *con;
@@ -72,7 +72,7 @@ int main()
 	}
 
 	// if already logged in
-	
+
 	// get the GET parameter for the city
 	char* city;
 	form_iterator fi = cgi.getElement("city");
@@ -92,7 +92,7 @@ int main()
 		// nothing specified for the post page
 		p_page = 1;
 	}
-	
+
 	// get the GET parameter for the search
 	char* search;
 	fi = cgi.getElement("search");
@@ -156,12 +156,12 @@ void printHeaderMenuArea()
     cout << "</button>\n";
     cout << "<div class=\"collapse navbar-collapse offset\" id=\"navbarSupportedContent\">\n";
     cout << "<ul class=\"nav navbar-nav menu_nav ml-auto\" style=\"height:80px\">\n";
-    cout << "<li class=\"nav-item \"><a class=\"nav-link\" href=\"/index.html\">Home</a></li>\n"; 
-    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/profile.html\">My Profile</a></li>\n"; 
-    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/settings.html\">Settings</a></li>\n"; 
+    cout << "<li class=\"nav-item \"><a class=\"nav-link\" href=\"/index.html\">Home</a></li>\n";
+    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/profile.html\">My Profile</a></li>\n";
+    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/settings.html\">Settings</a></li>\n";
     cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/cgi-bin/logout.cgi\">Log Out</a>\n";
     cout << "</ul>\n";
-    cout << "</div>\n"; 
+    cout << "</div>\n";
     cout << "</div>\n";
     cout << "</nav>\n";
     cout << "</div>\n";
@@ -233,7 +233,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
         cout << "<div class=\"row\">\n";
         cout << "<div class=\"col-lg-8\">\n";
         cout << "<div class=\"blog_left_sidebar\">\n";
-	
+
 	sql::ResultSet *res_post;
 	sql::ResultSet *res_adv;
 	sql::ResultSet *res_post_count;
@@ -242,7 +242,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 	sql::PreparedStatement *pstmt_post_count;
 
 	// determine how many posts there are total for the city
-	int post_count;	
+	int post_count;
 	string sql_post_count = "select count(*) from post_content where location=? and instr(content_title, ?)>0";
 	pstmt_post_count = con->prepareStatement(sql_post_count);
 	pstmt_post_count->setString(1, city);
@@ -261,7 +261,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 		post_count = 0;
 	}
 	int total_num_post_page = post_count / 10 + 1;
-	if (p_page > total_num_post_page) p_page = total_num_post_page;	
+	if (p_page > total_num_post_page) p_page = total_num_post_page;
 
 	// get the post data from the DB
 	string sql_post = "SELECT * FROM post_content where location=? and instr(content_title, ?)>0 order by time_written DESC";
@@ -276,7 +276,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 		res_post->next();
 	}
 
-	
+
 	int count = 0;
 	while (res_post->next() && count < 10)
 	{
@@ -289,7 +289,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 		char* title = strdup((res_post->getString("content_title")).c_str());
 		char* text = strdup((res_post->getString("content_text")).c_str());
 		makeArticle(userID, author_id, post_id, dateTime, location, imgsrc, title, text);
-		
+
 		count++;
 	}
 
@@ -307,7 +307,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 	pstmt_adv = con->prepareStatement(sql_adv);
 	pstmt_adv->setString(1, city);
 	res_adv = pstmt_adv->executeQuery();
-	
+
 	count = 0;
 
 	// print maximum 10 advertisements
@@ -317,7 +317,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 		char* imgsrc = strdup((res_adv->getString("content_img")).c_str());
 		char* title = strdup((res_adv->getString("content_title")).c_str());
 		char* link = strdup((res_adv->getString("content_link")).c_str());
-		
+
 		makeAdvertisement(title, imgsrc, link);
 
 		count++;
@@ -463,7 +463,7 @@ void post_pagination(char* city, int p_page, int total_num_post_page, char* sear
 
 void printFooterArea()
 {
-	cout << "<!--================ Start footer Area  =================-->\n";	
+	cout << "<!--================ Start footer Area  =================-->\n";
     cout << "<footer>\n";
 	cout << "<div class=\"footer-bottom\">\n";
     cout << "<div class=\"container\">\n";
@@ -476,7 +476,7 @@ void printFooterArea()
     cout << "</div>\n";
     cout << "</footer>\n";
     cout << "<!--================ End footer Area  =================-->\n";
- 
+
 	return;
 }
 
@@ -509,4 +509,3 @@ void redirectToLogin()
 
 	return;
 }
-
