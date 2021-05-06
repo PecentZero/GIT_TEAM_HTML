@@ -67,7 +67,6 @@ how to execute:
         mkdir /var/www/html/uploads
         chmod 775 /var/www/html/uploads
         umask 0002 /var/www/html/uploads
-
         mkdir /var/www/html/adv_uploads
         chmod 775 /var/www/html/adv_uploads
         umask 0002 /var/www/html/adv_uploads
