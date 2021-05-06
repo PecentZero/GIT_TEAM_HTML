@@ -1,0 +1,285 @@
+/*body {
+  background: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ8NDQ0NFREWFhURExMYHSggGBoxGxUVITEhMSkrLi4uFx8zODMsNygtLisBCgoKDQ0NDg0NDysZFRkrKysrLS0rLTctKy0rKystKzc3LSs3NystKy0rNzc3Nys3Kys3LSsrKysrKysrKysrK//AABEIAKgBLAMBIgACEQEDEQH/xAAaAAEBAQEBAQEAAAAAAAAAAAAAAQIDBAYF/8QAHxABAQEBAQACAgMAAAAAAAAAAAECEQMhMYGSBFFT/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwD6jxz9Pf5Zebwy93llR388vRiMeeXbMBrLpIznLtnKKuY6ZiTLrICZjpCZazkFjUWZamQSRY1xZAZjUiyKIigAAAAAAAAAADKNpwGUsasRBisV0rNgOdjluO9jGoDxemXm1Hu9MvNqfKj5/wAsvd5Zebxy9nnFHbEdcuWXSQV2y7Zrz5dYDvmuubHny6ZQd5W5XDLfQdpWpXLNbgOnVYiwRoAAAAAAAAAAAAAAABmxbUtBEsVKDNjFjdYoOO8uGsvVt59fYPwfLL1Yy5+eXokUJHSRMx1zkFkdMxJHTMFXMbzCZbkBZG5EkbkQMxuJI1wBYSNCAAAAAAAAAAAAAACVUoJUVARKVLQZrNatYtBNOGo7WuNB+X55dsxPPLrIoZjpmGY65gqZjrISNyAZjchmOkgJmNyEjUiCcakJFEAAAAAAAAAAAAAAAAS1KVKCJaVLQS1m0tZtBbXPVLWbQLXPVW6YtB58Zdc5MR0zlQzl0zCZdM5FXOWpFkbkAkakWRZECReKCAAAAAAAAAAAAAAAACVUoJWatZoJazatrNBLWK1WKDNrNarFBis1ayDrnLpnKYjrIoZjcyuY3IikjUhI1IBIoCAAAAAAAAAAAAAAAAAACVUoM1mtVKDGma3WKDNYrpxmwHOsajpYzYDlWLHW5Z4D04jciZbgNSNxmKK1GmF6I0J06CgAAAAAAAAAAAAAAAAAM1pmgiVUBGbGkBipW+M2AxYxY68Sg42Jx1sZ4DrltjLcBWoysFVUIDQgCr1kRGlZOg0IKKIdBROr0AQ6CgnQUTpaCjPU6DXUqdTqDSHU6ACdA4li9TqjPE41azQZsZ43WOg1h0jjiuuQaWACkCIqgALwAAUQAAAAABFABAADoBxF6gIKlFRK1UBOoHQS1KIB1OnWRC1zumtVx1oHXFds15fPT0Y0o7DOa0CxWYqKoAKIoCp1QOgdEAJQAAOiAqoICpQA6dAE6igCBaCWsrUoJUqpQSsVpjVBjdcdX5b3XDWhE8v5fn/pj9o9nl65v1ZfzAZlXHfO5/bpKCooCqoAKACoAL0QBQABAAAAQBUADoAIACVm1QE6loAlZoAza5boCOHpp59a+UAf/9k=') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}*/
+
+.masthead {
+  height: 100vh;
+  min-height: 500px;
+  background-image: url('https://static-cse.canva.com/blob/140234/Rainbow-Gradient-Pink-and-Purple-Zoom-Virtual-Background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.row-alignment{
+	margin-top:75px;
+
+}
+
+.card-date{
+	text-align: right;
+	margin-right: 15px;
+	margin-top: 50px;
+	font-size: 13px;
+}
+
+.comment{
+	font-size:16px;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.comment img{
+	height:60px;
+}
+
+.reply input{
+
+}
+
+.foot{
+	margin-top: 55px;
+	text-align: center;
+	padding-top:15px;
+	padding-bottom: 5px;
+	color:white;
+	font-size:14px;
+	margin-bottom: -20px
+}
+
+
+
+
+
+
+
+
+
+:root {
+  --input-padding-x: 1.5rem;
+  --input-padding-y: 0.75rem;
+}
+
+.login,
+.image {
+  min-height: 100vh;
+}
+
+.bg-image {
+  background-image: url('https://img.freepik.com/free-vector/white-abstract-background_23-2148810113.jpg?size=626&ext=jpg&ga=GA1.2.1991903213.1616803200');
+  background-size: cover;
+  background-position: center;
+}
+
+.login-heading {
+  font-weight: 300;
+}
+
+.btn-login {
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+  border-radius: 2rem;
+}
+
+.form-label-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-label-group>input,
+.form-label-group>label {
+  padding: var(--input-padding-y) var(--input-padding-x);
+  height: auto;
+  border-radius: 2rem;
+}
+
+.form-label-group>label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  /* Override default `<label>` margin */
+  line-height: 1.5;
+  color: #495057;
+  cursor: text;
+  /* Match the input under the label */
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  transition: all .1s ease-in-out;
+}
+
+.form-label-group input::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input:-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-moz-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::placeholder {
+  color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
+  padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+  padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group input:not(:placeholder-shown)~label {
+  padding-top: calc(var(--input-padding-y) / 3);
+  padding-bottom: calc(var(--input-padding-y) / 3);
+  font-size: 12px;
+  color: #777;
+}
+
+/* Fallback for Edge
+-------------------------------------------------- */
+
+@supports (-ms-ime-align: auto) {
+  .form-label-group>label {
+    display: none;
+  }
+  .form-label-group input::-ms-input-placeholder {
+    color: #777;
+  }
+}
+
+/* Fallback for IE
+-------------------------------------------------- */
+
+@media all and (-ms-high-contrast: none),
+(-ms-high-contrast: active) {
+  .form-label-group>label {
+    display: none;
+  }
+  .form-label-group input:-ms-input-placeholder {
+    color: #777;
+  }
+}
+
+
+
+
+.card-signin {
+  border: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-signin .card-title {
+  margin-bottom: 2rem;
+  font-weight: 300;
+  font-size: 1.5rem;
+}
+
+.card-signin .card-img-left {
+  width: 45%;
+  /* Link to your background image using in the property below! */
+  background: scroll center url('https://img.freepik.com/free-vector/white-abstract-background_23-2148810113.jpg?size=626&ext=jpg&ga=GA1.2.1991903213.1616803200');
+  background-size: cover;
+}
+
+.card-signin .card-body {
+  padding: 2rem;
+}
+
+.form-signin {
+  width: 100%;
+}
+
+.form-signin .btn {
+  font-size: 80%;
+  border-radius: 5rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+  padding: 1rem;
+  transition: all 0.2s;
+}
+
+.form-label-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-label-group input {
+  height: auto;
+  border-radius: 2rem;
+}
+
+.form-label-group>input,
+.form-label-group>label {
+  padding: var(--input-padding-y) var(--input-padding-x);
+}
+
+.form-label-group>label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  /* Override default `<label>` margin */
+  line-height: 1.5;
+  color: #495057;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  transition: all .1s ease-in-out;
+}
+
+.form-label-group input::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input:-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-moz-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::placeholder {
+  color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
+  padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+  padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group input:not(:placeholder-shown)~label {
+  padding-top: calc(var(--input-padding-y) / 3);
+  padding-bottom: calc(var(--input-padding-y) / 3);
+  font-size: 12px;
+  color: #777;
+}
+
+.btn-google {
+  color: white;
+  background-color: #ea4335;
+}
+
+.btn-facebook {
+  color: white;
+  background-color: #3b5998;
+}
