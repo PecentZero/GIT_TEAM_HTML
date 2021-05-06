@@ -64,7 +64,7 @@ int main()
 	}
 
 	sql::ResultSet *res;
-	sql::PreparedStatement *stmt;
+	sql::Statement *stmt;
 
 	char query[100] = "select * from user_auth where username=/'";
 	strcat(query,userID);
@@ -92,7 +92,7 @@ int main()
 	}
 
 	delete res;
-	delete pstmt_del;
+	delete stmt;
 	delete con;
 	redirectToLoginWithAlert();
 
