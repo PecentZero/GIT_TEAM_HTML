@@ -31,7 +31,7 @@ int main()
 {
 	// create cgicc instance for cookie
 	// get the cookie value
-	char* cookie[30];
+	char cookie[30];
 	Cgicc cgi;
 	const_cookie_iterator cci;
 
