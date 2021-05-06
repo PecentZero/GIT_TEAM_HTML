@@ -57,9 +57,9 @@ how to execute:
     </IfDefine>
 
       - 7-3 <enter below command>
-        chmod 755 /var/www/cgi-bin
-        a2enmod cgi
-        service apache2 restart
+    - chmod 755 /var/www/cgi-bin
+    - a2enmod cgi
+    - service apache2 restart
 
 8. configure "/var/www/html/uploads" and "/var/www/html/adv_uploads" directory's permissions so apache2 can create files in those directories.
     - enter below command
