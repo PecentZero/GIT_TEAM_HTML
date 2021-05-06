@@ -92,7 +92,7 @@ int main()
 	}
 
 	delete res;
-	delete pstmt;
+	delete pstmt_del;
 	delete con;
 	redirectToLoginWithAlert();
 
