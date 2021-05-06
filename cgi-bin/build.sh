@@ -1,6 +1,8 @@
 #!/bin/sh
 
 cd /var/www/cgi-bin/
+
+rm *.cgi
 g++ -o login.cgi login.cpp cookie.cpp -lmysqlcppconn -lcgicc
 g++ -o logout.cgi logout.cpp -lmysqlcppconn -lcgicc
 g++ -o create_post.cgi create_post.cpp -lmysqlcppconn -lcgicc

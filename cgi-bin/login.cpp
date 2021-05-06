@@ -84,7 +84,7 @@ int main()
 		char* newCookie = generate_cookie(20, con);
 		create_session(newCookie, userID, con);
 		delete res;
-		delete pstmt;
+		delete stmt;
 		delete pstmt_del;
 		delete con;
 		redirectToMainWithCookie(newCookie);
