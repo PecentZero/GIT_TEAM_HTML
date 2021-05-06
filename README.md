@@ -33,11 +33,11 @@ how to execute:
     	AddHandler cgi-script .cgi
     </Directory>
 
-    - 7-2 We attached "serve-cgi-bin.conf" file , if you want, just copy it
-      or you can edit like below
-      => vim /etc/apache2/conf-available/serve-cgi-bin.conf
-      edit <IFDefine ..... > ...... </IfDefine >
-      like below
+    - 7-2 We attached "serve-cgi-bin.conf" file
+    -  if you want, just copy it
+    - or you can edit like below
+    - vim /etc/apache2/conf-available/serve-cgi-bin.conf
+    - edit <IFDefine ..... > ...... </IfDefine > like below
 
     <IfDefine ENABLE_USR_LIB_CGI_BIN>
       ##ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
