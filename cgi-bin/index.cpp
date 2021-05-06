@@ -361,7 +361,7 @@ void printUntilAdvertisementStart()
 void makeAdvertisement(char* title, char* imgsrc, char* link)
 {
 	cout << "<div class=\"media post_item\">\n";
-    cout << "<img src=\"/" << imgsrc << "\" alt=\"post\">\n";
+    cout << "<img src=\"/" << imgsrc << "\" alt=\"post\" style=\"width:100%%\">\n";
     cout << "<div class=\"media-body\">\n";
     cout << "<h3>" << title << "</h3>\n";
     cout << "<a href=\"" << link << "\"><p>link</p></a>\n";
