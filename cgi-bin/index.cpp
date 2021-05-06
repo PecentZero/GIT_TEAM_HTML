@@ -56,28 +56,25 @@ int main()
 	con->setSchema("HTML_DB");
 
 	// get the cookie value
-	char cookie[30];
-  int sessionOK = 0;
-  strcpy(cookie,strdup((cci->getValue()).c_str()));
-	// check the session
-	char* userID = session_check(cookie, con);
+	const CgiEnvironment& env = cgi.getEnvironment();
+	cci = env.getCookieList().begin();
 
+	// check the session
+	char cookie[30];
+	int sessionOK = 0;
+	strcpy(cookie, strdup((cci->getValue()).c_str()));
+	char* userID = session_check(cookie, con);
 	if (userID != NULL)
 	{
-		// if not logged in, redirect to the login page
 		sessionOK = 1;
-		return 0;
 	}
 
-if(!sessionOK)
-{
-  //if not logged in , redirect to the login page
-  redirectToLogin();
-  return 0;
-
-
-}
-
+	if (!sessionOK)
+	{
+		// if not logged in, redirect to the login page
+		redirectToLogin();
+		return 0;
+	}
 
 	// if already logged in
 
@@ -165,7 +162,7 @@ void printHeaderMenuArea()
     cout << "<div class=\"collapse navbar-collapse offset\" id=\"navbarSupportedContent\">\n";
     cout << "<ul class=\"nav navbar-nav menu_nav ml-auto\" style=\"height:80px\">\n";
     cout << "<li class=\"nav-item \"><a class=\"nav-link\" href=\"/index.html\">Home</a></li>\n";
-    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/profile.html\">My Profile</a></li>\n";
+    cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/cgi-bin/profile.cgi\">My Profile</a></li>\n";
     cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/settings.html\">Settings</a></li>\n";
     cout << "<li class=\"nav-item\"><a class=\"nav-link\" href=\"/cgi-bin/logout.cgi\">Log Out</a>\n";
     cout << "</ul>\n";
@@ -279,7 +276,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 	res_post = pstmt_post->executeQuery();
 
 
-	for (int i = 0; i < (total_num_post_page - 1)*10; i++)
+	for (int i = 0; i < (p_page - 1)*10; i++)
 	{
 		res_post->next();
 	}
@@ -364,7 +361,7 @@ void printUntilAdvertisementStart()
 void makeAdvertisement(char* title, char* imgsrc, char* link)
 {
 	cout << "<div class=\"media post_item\">\n";
-    cout << "<img src=\"" << imgsrc << "\" alt=\"post\">\n";
+    cout << "<img src=\"/" << imgsrc << "\" alt=\"post\">\n";
     cout << "<div class=\"media-body\">\n";
     cout << "<h3>" << title << "</h3>\n";
     cout << "<a href=\"" << link << "\"><p>link</p></a>\n";
@@ -392,7 +389,7 @@ void makeArticle(char* userID, char* author_id, int post_id, char* dateTime, cha
     cout << "<a >" << location << "</a>\n";
     cout << "</div>\n";
     cout << "<ul class=\"blog_meta list\">\n";
-    cout << "<li><a href=\"" << profile_link << "\">" << author_id << "<i class=\"lnr lnr-user\"></i></a></li>\n";
+    cout << "<li><a href=\"/cgi-bin/profile.cgi?user_id=" << author_id << "\">" << author_id << "<i class=\"lnr lnr-user\"></i></a></li>\n";
 	if (strcmp(userID, author_id) == 0) {
 		cout << "<li><a href=\"" << "/cgi-bin/edit_post.cgi?post_id=" << post_id << "\"> edit <i class=\"lnr lnr-user\"></i></a></li>\n";
 		cout << "<li><a href=\"" << "/cgi-bin/delete_post.cgi?post_id=" << post_id << "\"> delete <i class=\"lnr lnr-user\"></i></a></li>\n";
@@ -405,7 +402,7 @@ void makeArticle(char* userID, char* author_id, int post_id, char* dateTime, cha
     cout << "</div>\n";
     cout << "<div class=\"col-md-9\">\n";
     cout << "<div class=\"blog_post\">\n";
-    cout << "<img src=\"/uploads/" << imgsrc << "\" alt=\"\">\n";
+    cout << "<img src=\"/" << imgsrc << "\" alt=\"\">\n";
     cout << "<div class=\"blog_details\">\n";
     cout << "<h2>" << title << "</h2></a>\n";
     cout << "<p>" << text << "</p>\n";

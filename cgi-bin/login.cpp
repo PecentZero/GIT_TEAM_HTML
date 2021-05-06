@@ -65,14 +65,13 @@ int main()
 
 	sql::ResultSet *res;
 	sql::Statement *stmt;
+	char query[100] = "select * from user_auth where username=\'";
+	strcat(query, userID);
+	strcat(query, "\' and password=sha2(\'");
+	strcat(query, password);
+	strcat(query, "\',512)");
 
-	char query[100] = "select * from user_auth where username=/'";
-	strcat(query,userID);
-	strcat(query,"\' and password=sha2(\'");
-	strcat(query,password);
-	strcat(query,"\',512)");
-
- stmt = con->createStatement();
+	stmt = con->createStatement();
 	res = stmt->executeQuery(query);
 	if (res->next())
 	{

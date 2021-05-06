@@ -67,12 +67,12 @@ int main()
 
 	// get the POST parameter university
 	char university[30];
-	fi = cgi.getElement("university");https://github.com/PecentZero/GIT_TEAM_HTML
+	fi = cgi.getElement("university");
 	if ( !fi->isEmpty() && fi != (*cgi).end()){
 		strcpy(university,strdup((**fi).c_str()));
 	} else {
 		// nothing specified for the city name
-		strcpy(university , "");
+		strcpy(university, "");
 	}
 
 	// create a mysql connection
@@ -95,22 +95,53 @@ int main()
 		return 0;
 	}
 
-	// update the DB
-	sql::PreparedStatement *pstmt;
+	// check if profile already exists
+	sql::PreparedStatement *pstmt_check;
+	sql::ResultSet *res_check;
+	string sql_check = "select * from user_profile where username=?";
+	pstmt_check = con->prepareStatement(sql_check);
+	pstmt_check->setString(1, username);
+	res_check = pstmt_check->executeQuery();
+	int exist;
+	if (res_check->next()) exist = 1;
+	else exist = 0;
+	delete pstmt_check;
+	delete res_check;
 
-	string sql = "update user_profile set fullname=?, university=?, email=?, nationality=? where username = ?";
-	pstmt = con->prepareStatement(sql);
-	pstmt->setString(1, fullName);
-	pstmt->setString(2, university);
-	pstmt->setString(3, email);
-	pstmt->setString(4, country);
-	pstmt->setString(5, username);
-	pstmt->execute();
+	if (exist)
+	{
+		// update the profile in DB
+		sql::PreparedStatement *pstmt;
 
-	delete pstmt;
+		string sql = "update user_profile set fullname=?, university=?, email=?, nationality=? where username = ?";
+		pstmt = con->prepareStatement(sql);
+		pstmt->setString(1, fullName);
+		pstmt->setString(2, university);
+		pstmt->setString(3, email);
+		pstmt->setString(4, country);
+		pstmt->setString(5, username);
+		pstmt->execute();
+
+		delete pstmt;
+	}
+	else
+	{
+		// create the profile in DB
+		sql::PreparedStatement *pstmt2;
+		string sql2 = "insert into user_profile(username, fullname, university, email, nationality) values (?,?,?,?,?)";
+		pstmt2 = con->prepareStatement(sql2);
+		pstmt2->setString(1, username);
+		pstmt2->setString(2, fullName);
+		pstmt2->setString(3, university);
+		pstmt2->setString(4, email);
+		pstmt2->setString(5, country);
+		pstmt2->execute();
+
+		delete pstmt2;
+	}
 	delete con;
 
-	// redirect to login page
+	// redirect to main page
 	redirectToMain();
 
 	return 0;
