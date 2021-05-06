@@ -33,11 +33,11 @@ how to execute:
     	AddHandler cgi-script .cgi
     </Directory>
 
-    - 7-2 We attached "serve-cgi-bin.conf" file , if you want, just copy it
-      or you can edit like below
-      => vim /etc/apache2/conf-available/serve-cgi-bin.conf
-      edit <IFDefine ..... > ...... </IfDefine >
-      like below
+    - 7-2 We attached "serve-cgi-bin.conf" file
+    -  if you want, just copy it
+    - or you can edit like below
+    - vim /etc/apache2/conf-available/serve-cgi-bin.conf
+    - edit <IFDefine ..... > ...... </IfDefine > like below
 
     <IfDefine ENABLE_USR_LIB_CGI_BIN>
       ##ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
@@ -57,20 +57,19 @@ how to execute:
     </IfDefine>
 
       - 7-3 <enter below command>
-        chmod 755 /var/www/cgi-bin
-        a2enmod cgi
-        service apache2 restart
+    - chmod 755 /var/www/cgi-bin
+    - a2enmod cgi
+    - service apache2 restart
 
 8. configure "/var/www/html/uploads" and "/var/www/html/adv_uploads" directory's permissions so apache2 can create files in those directories.
-      <enter below command >
-        chgrp -R www-data /var/www
-        mkdir /var/www/html/uploads
-        chmod 775 /var/www/html/uploads
-        umask 0002 /var/www/html/uploads
-
-        mkdir /var/www/html/adv_uploads
-        chmod 775 /var/www/html/adv_uploads
-        umask 0002 /var/www/html/adv_uploads
+    - enter below command
+    - chgrp -R www-data /var/www
+    - mkdir /var/www/html/uploads
+    - chmod 775 /var/www/html/uploads
+    - umask 0002 /var/www/html/uploads
+    - mkdir /var/www/html/adv_uploads
+    - chmod 775 /var/www/html/adv_uploads
+    - umask 0002 /var/www/html/adv_uploads
 
 9. go to "/var/www/cgi-bin" directory
     - cd /var/www/cgi-bin
