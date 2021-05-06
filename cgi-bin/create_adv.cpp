@@ -134,12 +134,11 @@ bool Check_img_file_Element(const_file_iterator &f,string msg)
 
       if(filetype.length() >= 5 && filetype == "image")
         return true;
-      else alert_msg = "Not image file";
-
+      else {alert_msg = "Not image file";
+			return false;
+			}
   }
-else alert_msg = "No file";
-    return true;
-  alert_msg = "image file must be attached!";
+else alert_msg = "image file must be attached!";
   return false;
   }
 
@@ -191,6 +190,7 @@ string make_filename (sql::Connection *con,string temp_filename)  // check If th
 	break;
 	srand(time(NULL));
 	filename += number[rand()%10];
+	delete pstmt;
 	delete res;
 }
 
@@ -205,7 +205,7 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_location ,form_iterator
 {
 	string content_title, content_link,content_img,location;
 	string path ="adv_uploads/";
-  string globalpath ="/var/www/html/";
+  string globalpath ="../html/";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
@@ -262,7 +262,7 @@ void Update_DB(form_iterator &f_adv_id ,form_iterator &f_title , form_iterator &
 	string content_title, content_link,content_img,location,adv_id;
 	string delete_img; // should delete
 	string path ="adv_uploads/";
-  string globalpath ="/var/www/html/";
+  string globalpath ="../html/";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
@@ -367,9 +367,11 @@ bool Check_auth(string session_value,string &username)
 		if(res->next()) // session exist
 		{
 			username = res->getString("username");
-		 	delete res;
+			delete res;
+			delete con;
 			return true;
 		}
+		delete res;
 		delete con;
 		alert_msg = "Try login again!";
 		return false;
@@ -411,8 +413,10 @@ bool Check_adv_auth(string adv_id,string session_username)
 								else alert_msg ="No Permission";
 						}
 
-			delete con;
-			return false;
+					delete res;
+					delete pstmt;
+					delete con;
+					return false;
 }
 
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value)

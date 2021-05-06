@@ -130,7 +130,7 @@ int main()
   cout << "\n";
 	}
 
-	cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
+	cout << "<script> alert(\""<<alert_msg<<"\"); </script>\n";
 	cout << "</body>\n";
 	cout << "\n";
 	cout << "<!-- <script src=\"//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js\"></script>\n";
@@ -191,7 +191,7 @@ bool Check_auth(string session_value,string &username)
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
-		con = driver->connect("localhost","root",SQL_PASSWORD);
+		con = driver->connect("tcp://127.0.0.1:3306","root",SQL_PASSWORD);
 		con->setSchema("HTML_DB");
 
 		//session
@@ -205,12 +205,15 @@ bool Check_auth(string session_value,string &username)
 		{
 			username = res->getString("username");
 		 	delete res;
+			delete con;
 			return true;
 		}
+		delete res;
 		delete con;
 		alert_msg = "Try login again!";
 		return false;
 }
+
 
 bool Check_post_auth(string post_id,string session_username)
 {
@@ -236,16 +239,18 @@ bool Check_post_auth(string post_id,string session_username)
 
 							post_username = res->getString("author_id");
 
-							delete res;
-							delete pstmt;
-
 									if(session_username == post_username) //authentication
 									{
+										delete res;
+										delete pstmt;
 										delete con;
 									return true;
 								}
 						}
 					alert_msg ="No matching post";
+
+			delete res;
+			delete pstmt;
 			delete con;
 			return false;
 }

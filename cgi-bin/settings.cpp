@@ -67,7 +67,7 @@ int main()
 
 	// get the POST parameter university
 	char university[30];
-	fi = cgi.getElement("university");
+	fi = cgi.getElement("university");https://github.com/PecentZero/GIT_TEAM_HTML
 	if ( !fi->isEmpty() && fi != (*cgi).end()){
 		strcpy(university,strdup((**fi).c_str()));
 	} else {

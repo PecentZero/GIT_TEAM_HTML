@@ -25,6 +25,8 @@ using namespace cgicc;
 bool Check_Element(form_iterator &f,string msg);
 bool Check_ElementN(form_iterator &f);
 bool Check_file_Element(const_file_iterator &,string);
+bool Check_img_fileN_Element(const_file_iterator &f,string msg); //img file or none file
+bool Check_img_file_Element(const_file_iterator &f,string msg);
 string trim_space(string);
 string make_filename (sql::Connection *con,string temp_filename);
 void Insert_DB(form_iterator &, form_iterator &, form_iterator &, const_file_iterator &,string);
@@ -40,6 +42,7 @@ string alert_msg ="Success";
 int main() {
 	string author_id,location, content_title,content_text,content_img;
 	string session_name,session_value,username;
+	int option = 1 ; // 0 => go to root home , 1 -> history.back()  3-> edit page
 	session_name="session_id";
 
   cout << "Content-type:text/html\r\n\r\n";
@@ -60,7 +63,7 @@ int main() {
   form_iterator f_type = formData.getElement("type"); // for edit
 
 
-	if (get_cookie_value(formData.getEnvironment(),session_name,session_value)&&Check_auth(session_value,username)&&Check_Element(f_title,"title") &&  Check_Element(f_description,"content") && Check_Element(f_location,"location"))//&& Check_file_Element(f_file)) // exist
+	if (get_cookie_value(formData.getEnvironment(),session_name,session_value)&&Check_auth(session_value,username)&&Check_Element(f_title,"title") &&  Check_Element(f_description,"content") && Check_Element(f_location,"location")&&Check_img_fileN_Element(f_file,"img_file"))//&& Check_file_Element(f_file)) // exist
 {
 
 	if(Check_ElementN(f_type))
@@ -68,7 +71,7 @@ int main() {
 		if( **f_type == string("update")){
 			if(Check_Element(f_post_id,"post_id")&&Check_post_auth(**f_post_id,username))
 			{ Update_DB(f_post_id,f_title,f_location,f_description,f_file);
-
+				option=2;
 		 }
 			}
 		else alert_msg ="type parameter error or post_id error";
@@ -76,16 +79,18 @@ int main() {
 
 	else
 	Insert_DB(f_title,f_location,f_description,f_file,username);
+	option=0;
 }
 
-cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
-if(**f_type == string("update"))
-cout <<" location.href = \"/cgi-bin/edit_post.cgi?post_id="<<trim_space(**f_post_id)<<"\" </script>\n";
-else
+cout << "<script> alert(\""<<alert_msg<<"\");\n";
+if(option == 0) // go root
+cout << " location.href = \"/\"</script>\n";
+if(option == 1) //go back
 cout <<" history.back(); </script>\n";
-cout << "<br>\n";
-cout <<"</body>\n";
-cout <<"</html>\n";
+if(option == 2) //go edit
+cout <<" location.href = \"/cgi-bin/edit_post.cgi?post_id="<<trim_space(**f_post_id)<<"\" </script>\n";
+else cout <<"</script>\n";
+
 
  return 0;
 
@@ -114,6 +119,45 @@ bool Check_file_Element(const_file_iterator &f,string msg)
 		return false;
 	}
 }
+
+
+bool Check_img_fileN_Element(const_file_iterator &f,string msg)
+{ //also needed check space or valid value
+  string filetype;
+	if(f != formData.getFiles().end()){
+      filetype = f->getDataType();
+      filetype = filetype.substr(0,5);
+
+      if(filetype.length() >= 5 && filetype == "image")
+        return true;
+      else {alert_msg = "Not image file";
+			return false;
+			}
+  }
+	else true ; //No file ok
+}
+
+
+bool Check_img_file_Element(const_file_iterator &f,string msg)
+{ //also needed check space or valid value
+  string filetype;
+	if(f != formData.getFiles().end()){
+      filetype = f->getDataType();
+      filetype = filetype.substr(0,5);
+
+      if(filetype.length() >= 5 && filetype == "image")
+        return true;
+      else {alert_msg = "Not image file";
+			return false;
+			}
+  }
+else alert_msg = "image file must be attached!";
+  return false;
+  }
+
+
+
+
 string trim_space(string temp)
 {
 
@@ -145,6 +189,7 @@ string trim_space(string temp)
 string make_filename (sql::Connection *con,string temp_filename)  // check If there is same file name
 {
 
+
   string path ="uploads/";
 	string filename=temp_filename;
 	sql::ResultSet *res;
@@ -161,6 +206,7 @@ string make_filename (sql::Connection *con,string temp_filename)  // check If th
 	break;
 	srand(time(NULL));
 	filename += number[rand()%10];
+	delete pstmt;
 	delete res;
 }
 
@@ -175,7 +221,7 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_location ,form_iterator
 {
 	string content_title, content_text,content_img,location;
 	string path ="uploads/";
-  string globalpath ="/var/www/html/";
+  string globalpath ="../html/";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
@@ -189,7 +235,6 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_location ,form_iterator
 	location = **f_location;
 
 if(Check_file_Element(f_file,"file")){  //file attachement exists
-
 	content_img = make_filename(con,f_file->getFilename());
 
 	ofstream f_o((globalpath+path+content_img).c_str(),ios::out|ios::binary);
@@ -208,6 +253,8 @@ if(Check_file_Element(f_file,"file")){  //file attachement exists
 
 	delete pstmt;
 }
+
+
 
 else{ //file attachement doesnot exist
 	string sql ="INSERT INTO post_content (author_id,content_title,content_text,time_written,location) VALUES (?,?,?,NOW(),?)";
@@ -232,7 +279,7 @@ void Update_DB(form_iterator &f_post_id ,form_iterator &f_title , form_iterator 
 	string content_title, content_text,content_img,location,post_id;
 	string delete_img; // should delete
 	string path ="uploads/";
-  string globalpath ="/var/www/html/";
+  string globalpath ="../html/";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
@@ -338,6 +385,7 @@ bool Check_auth(string session_value,string &username)
 		{
 			username = res->getString("username");
 		 	delete res;
+			delete con;
 			return true;
 		}
 		delete res;
@@ -358,7 +406,7 @@ bool Check_post_auth(string post_id,string session_username)
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
-		con = driver->connect("tcp://127.0.0.1:3306","root",SQL_PASSWORD);
+		con = driver->connect("localhost","root",SQL_PASSWORD);
 		con->setSchema("HTML_DB");
 
 		string sql ="SELECT author_id from post_content where post_id = ?";
@@ -371,21 +419,21 @@ bool Check_post_auth(string post_id,string session_username)
 
 							post_username = res->getString("author_id");
 
-							delete res;
-							delete pstmt;
-
 									if(session_username == post_username) //authentication
 									{
+										delete res;
+										delete pstmt;
 										delete con;
 									return true;
 								}
-								else alert_msg ="No Permission";
 						}
+					else alert_msg ="No Permission";
 
+			delete res;
+			delete pstmt;
 			delete con;
 			return false;
 }
-
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value)
 {
      const_cookie_iterator iter;

@@ -115,7 +115,7 @@ bool Check_auth(string session_value,string &username)
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
-		con = driver->connect("localhost","root",SQL_PASSWORD);
+		con = driver->connect("tcp://127.0.0.1:3306","root",SQL_PASSWORD);
 		con->setSchema("HTML_DB");
 
 		//session
@@ -129,12 +129,15 @@ bool Check_auth(string session_value,string &username)
 		{
 			username = res->getString("username");
 		 	delete res;
+			delete con;
 			return true;
 		}
+		delete res;
 		delete con;
 		alert_msg = "Try login again!";
 		return false;
 }
+
 
 bool Check_post_auth(string post_id,string session_username)
 {
@@ -160,26 +163,27 @@ bool Check_post_auth(string post_id,string session_username)
 
 							post_username = res->getString("author_id");
 
-							delete res;
-							delete pstmt;
-
 									if(session_username == post_username) //authentication
 									{
+										delete res;
+										delete pstmt;
 										delete con;
 									return true;
 								}
 						}
 					alert_msg ="No matching post";
+
+			delete res;
+			delete pstmt;
 			delete con;
 			return false;
 }
-
 
 void delete_post(string post_id)
 {//return img_content from post_content
 
 		string content_img;
-		string globalpath= "../";
+		string globalpath= "../html/";
 
 		sql::Driver *driver;
 		sql::Connection *con;
@@ -208,7 +212,14 @@ void delete_post(string post_id)
 						pstmt->setString(1,post_id);
 					  pstmt->executeUpdate();
 						delete pstmt;
+						delete con;
+						return ;
 				}
+
+
+				delete res;
+				delete pstmt;
+				delete con;
 
 }
 
@@ -216,7 +227,7 @@ void delete_post(string post_id)
 void delete_file_DB(string post_id)
 {
 	string delete_img; // should delete
-  string globalpath ="../";
+  string globalpath ="../html/";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
