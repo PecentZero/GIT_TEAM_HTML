@@ -1,3 +1,5 @@
+#define SQL_PASSWORD "root"
+
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -30,13 +32,13 @@ int main()
 	// create cgicc instance for cookie
 	Cgicc cgi;
 	const_cookie_iterator cci;
-	
+
 	// create a mysql connection
 	sql::Driver *driver;
 	sql::Connection *con;
 	driver = get_driver_instance();
-	con = driver->connect("tcp://127.0.0.1:3306", "root", "0812");
-	con->setSchema("security_project");
+	con = driver->connect("tcp://127.0.0.1:3306", "root", SQL_PASSWORD);
+	con->setSchema("HTML_DB");
 
 	// get the cookie value
 	char* cookie;
@@ -48,11 +50,11 @@ int main()
 	// delete the session
 	sql::PreparedStatement *pstmt;
 
-	string sql = "delete from sessions where cookie=?";
+	string sql = "delete from session where cookie=?";
 	pstmt = con->prepareStatement(sql);
 	pstmt->setString(1, cookie);
 	pstmt->execute();
-	
+
 	delete pstmt;
 	delete con;
 
@@ -75,4 +77,3 @@ void redirectToLogin()
 
 	return;
 }
-
