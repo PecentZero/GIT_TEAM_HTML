@@ -66,10 +66,10 @@ int main()
 	}
 
 	// get the POST parameter university
-	char* university;
+	char university[30];
 	fi = cgi.getElement("university");
 	if ( !fi->isEmpty() && fi != (*cgi).end()){
-		university = strdup((**fi).c_str());
+		strcpy(university,strdup((**fi).c_str()));
 	} else {
 		// nothing specified for the city name
 		university = "";
