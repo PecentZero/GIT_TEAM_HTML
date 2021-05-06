@@ -68,7 +68,7 @@ int main()
 
 	char query[100] = "select * from user_auth where username=/'";
 	strcat(query,userID);
-	strcat(query,"\' and password=sha2(\'"));
+	strcat(query,"\' and password=sha2(\'");
 	strcat(query,password);
 	strcat(query,"\',512)");
 
