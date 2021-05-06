@@ -1,3 +1,5 @@
+#define SQL_PASSWORD "root"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -173,12 +175,12 @@ void Insert_DB(form_iterator &f_title , form_iterator &f_location ,form_iterator
 {
 	string content_title, content_text,content_img,location;
 	string path ="uploads/";
-  string globalpath ="../../";
+  string globalpath ="/var/www/html/";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
 	driver = get_driver_instance();
-	con = driver->connect("localhost","root","root");
+	con = driver->connect("tcp://127.0.0.1:3306","root",SQL_PASSWORD);
 	con->setSchema("HTML_DB");
 
 
@@ -230,13 +232,13 @@ void Update_DB(form_iterator &f_post_id ,form_iterator &f_title , form_iterator 
 	string content_title, content_text,content_img,location,post_id;
 	string delete_img; // should delete
 	string path ="uploads/";
-  string globalpath ="../../";
+  string globalpath ="/var/www/html/";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
 	sql::ResultSet *res;
 	driver = get_driver_instance();
-	con = driver->connect("localhost","root","root");
+	con = driver->connect("tcp://127.0.0.1:3306","root",SQL_PASSWORD);
 	con->setSchema("HTML_DB");
 
   post_id = **f_post_id;
@@ -322,7 +324,7 @@ bool Check_auth(string session_value,string &username)
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
-		con = driver->connect("localhost","root","root");
+		con = driver->connect("tcp://127.0.0.1:3306","root",SQL_PASSWORD);
 		con->setSchema("HTML_DB");
 
 		//session
@@ -338,6 +340,7 @@ bool Check_auth(string session_value,string &username)
 		 	delete res;
 			return true;
 		}
+		delete res;
 		delete con;
 		alert_msg = "Try login again!";
 		return false;
@@ -355,7 +358,7 @@ bool Check_post_auth(string post_id,string session_username)
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
-		con = driver->connect("localhost","root","root");
+		con = driver->connect("tcp://127.0.0.1:3306","root",SQL_PASSWORD);
 		con->setSchema("HTML_DB");
 
 		string sql ="SELECT author_id from post_content where post_id = ?";

@@ -1,3 +1,5 @@
+#define SQL_PASSWORD "root"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -24,38 +26,38 @@ Cgicc formData;
 bool Check_Element(form_iterator &f,string msg);
 bool Check_ElementN(form_iterator &f);
 bool get_cookie_value(const CgiEnvironment &env,string cookie_name, string &wanted_value);
-void delete_adv(string adv_id);
+void delete_post(string post_id);
 bool Check_auth(string session_value,string &username);
-bool Check_adv_auth(string adv_id,string session_username);
-void delete_file_DB(string adv_id);
+bool Check_post_auth(string post_id,string session_username);
+void delete_file_DB(string post_id);
 
 string alert_msg = "Success";
 int main() {
-	string adv_id,session_cookie;
+	string post_id,session_cookie;
 	string session_name,session_value,username;
 	session_name="session_id";
   cout << "Content-type:text/html\r\n\r\n";
 	cout <<"<html>\n";
 	cout <<"<head>\n";
-	cout<<"<title>delete_adv</title>\n";
+	cout<<"<title>delete_post</title>\n";
 	cout <<"</head>\n";
 	cout << "<body>\n";
 
 
-	form_iterator f_adv_id = formData.getElement("adv_id"); //get post_id element
+	form_iterator f_post_id = formData.getElement("post_id"); //get post_id element
 	form_iterator f_type = formData.getElement("type"); // for edit
 
 	if(get_cookie_value(formData.getEnvironment(),session_name,session_value)
-	&&Check_Element(f_adv_id,"adv_id") && Check_auth(session_value,username) && Check_adv_auth((**f_adv_id),username))// exist session cookie , post id
+	&&Check_Element(f_post_id,"post_id") && Check_auth(session_value,username) && Check_post_auth((**f_post_id),username))// exist session cookie , post id
 	{
 		if(Check_ElementN(f_type))
 		{
 			if(**f_type == string("delfile"))
-			delete_file_DB(**f_adv_id);
+			delete_file_DB(**f_post_id);
 			else alert_msg ="type parameter error";
 		}
 		else
-		delete_post(**f_adv_id);
+		delete_post(**f_post_id);
 	}
 
 	cout << "<script> alert(\""<<alert_msg<<"\");\n" <<endl;
@@ -113,7 +115,7 @@ bool Check_auth(string session_value,string &username)
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
-		con = driver->connect("localhost","root","root");
+		con = driver->connect("localhost","root",SQL_PASSWORD);
 		con->setSchema("HTML_DB");
 
 		//session
@@ -134,10 +136,10 @@ bool Check_auth(string session_value,string &username)
 		return false;
 }
 
-bool Check_adv_auth(string adv_id,string session_username)
+bool Check_post_auth(string post_id,string session_username)
 {
 
-		string adv_username;
+		string post_username;
 
 		sql::Driver *driver;
 		sql::Connection *con;
@@ -145,10 +147,10 @@ bool Check_adv_auth(string adv_id,string session_username)
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
-		con = driver->connect("localhost","root","root");
+		con = driver->connect("localhost","root",SQL_PASSWORD);
 		con->setSchema("HTML_DB");
 
-		string sql ="SELECT author_id from advf_content where post_id = ?";
+		string sql ="SELECT author_id from post_content where post_id = ?";
 		pstmt= con->prepareStatement(sql);
 		pstmt->setString(1,post_id);
 		res= pstmt->executeQuery();
@@ -161,7 +163,7 @@ bool Check_adv_auth(string adv_id,string session_username)
 							delete res;
 							delete pstmt;
 
-									if(session_username == adv_username) //authentication
+									if(session_username == post_username) //authentication
 									{
 										delete con;
 									return true;
@@ -173,11 +175,11 @@ bool Check_adv_auth(string adv_id,string session_username)
 }
 
 
-void delete_adv(string adv_id)
+void delete_post(string post_id)
 {//return img_content from post_content
 
 		string content_img;
-		string globalpath= "../../";
+		string globalpath= "../";
 
 		sql::Driver *driver;
 		sql::Connection *con;
@@ -185,10 +187,10 @@ void delete_adv(string adv_id)
 		sql::PreparedStatement *pstmt;
 
 		driver = get_driver_instance();
-		con = driver->connect("localhost","root","root");
+		con = driver->connect("localhost","root",SQL_PASSWORD);
 		con->setSchema("HTML_DB");
 
-	 string sql ="SELECT content_img from adv_content where post_id = ?";
+	 string sql ="SELECT content_img from post_content where post_id = ?";
 	 pstmt= con->prepareStatement(sql);
 	 pstmt->setString(1,post_id);
 	 res = pstmt->executeQuery();
@@ -201,7 +203,7 @@ void delete_adv(string adv_id)
 						if(!content_img.empty())
 						remove((globalpath+content_img).c_str()); //delete img file
 
-						string sql ="DELETE from adv_content where adv_id = ?";//delete record
+						string sql ="DELETE from post_content where post_id = ?";//delete record
 						pstmt= con->prepareStatement(sql);
 						pstmt->setString(1,post_id);
 					  pstmt->executeUpdate();
@@ -211,20 +213,20 @@ void delete_adv(string adv_id)
 }
 
 
-void delete_file_DB(string adv_id)
+void delete_file_DB(string post_id)
 {
 	string delete_img; // should delete
-  string globalpath ="../../";
+  string globalpath ="../";
 	sql::Driver *driver;
 	sql::Connection *con;
 	sql::PreparedStatement *pstmt;
 	sql::ResultSet *res;
 	driver = get_driver_instance();
-	con = driver->connect("localhost","root","root");
+	con = driver->connect("localhost","root",SQL_PASSWORD);
 	con->setSchema("HTML_DB");
 
 
-	string sql ="select content_img from adv_content where adv_id = ?";
+	string sql ="select content_img from post_content where post_id = ?";
 	pstmt = con->prepareStatement(sql);
 	pstmt->setString(1,post_id);
 	res = pstmt->executeQuery();
@@ -238,9 +240,9 @@ void delete_file_DB(string adv_id)
  {	remove((globalpath+delete_img).c_str()); //delete img file
 
 
-	sql = "Update adv_content set content_img = NULL,time_written = NOW() where adv_id = ?";
+	sql = "Update post_content set content_img = NULL,time_written = NOW() where post_id = ?";
 	pstmt = con->prepareStatement(sql);
-	pstmt->setString(1,adv_id);
+	pstmt->setString(1,post_id);
 	pstmt->executeUpdate();
 
 	delete pstmt;
