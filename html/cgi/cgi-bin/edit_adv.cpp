@@ -72,7 +72,7 @@ int main()
   cout << "	        \n";
   cout << "    		<h1>Edit adv</h1>\n";
   cout << "    		\n";
-  cout << "    		<form enctype =\"multipart/form-data\" action=\"create_adv.cgi?adv_id="<<adv_id<<"&type=update&\" method=\"POST\">\n";
+  cout << "    		<form enctype =\"multipart/form-data\" action=\"create_adv.cgi?adv_id="<<trim_space(adv_id)<<"&type=update&\" method=\"POST\">\n";
   cout << "    		    \n";
   cout << "    		    \n";
   cout << "    		    \n";
