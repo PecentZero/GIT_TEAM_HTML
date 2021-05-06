@@ -393,7 +393,7 @@ void makeArticle(char* userID, char* author_id, int post_id, char* dateTime, cha
     cout << "</div>\n";
     cout << "<ul class=\"blog_meta list\">\n";
     cout << "<li><a href=\"" << profile_link << "\">" << author_id << "<i class=\"lnr lnr-user\"></i></a></li>\n";
-	if (strcmp(userID, author_id) == 0) {
+	/*if (strcmp(userID, author_id) == 0) {
 		cout << "<li><a href=\"" << "/cgi-bin/edit_post.cgi?post_id=" << post_id << "\"> edit <i class=\"lnr lnr-user\"></i></a></li>\n";
 		cout << "<li><a href=\"" << "/cgi-bin/delete_post.cgi?post_id=" << post_id << "\"> delete <i class=\"lnr lnr-user\"></i></a></li>\n";
 		cout << "<li><a href=\"" << "/cgi-bin/delete_post.cgi?post_id=" << post_id << "&type=delfile\"> delete file <i class=\"lnr lnr-user\"></i></a></li>\n";
@@ -413,7 +413,7 @@ void makeArticle(char* userID, char* author_id, int post_id, char* dateTime, cha
     cout << "</div>\n";
     cout << "</div>\n";
     cout << "</article>\n";
-
+*/
 	return;
 }
 
