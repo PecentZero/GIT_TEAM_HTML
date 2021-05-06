@@ -72,7 +72,7 @@ int main()
 		strcpy(university,strdup((**fi).c_str()));
 	} else {
 		// nothing specified for the city name
-		strcpy(university = "");
+		strcpy(university , "");
 	}
 
 	// create a mysql connection
