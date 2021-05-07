@@ -28,6 +28,11 @@ Cgicc formData;
 void Check_Element(form_iterator &f,string name); // print parameter's value
 string  trim_space(string);// trim  front , back  space
 
+void exploit()
+{
+	cout << "[TEAM HTML] Dummy Function for PoC\n";
+}
+
 int main()
 {
    string username,password,email;

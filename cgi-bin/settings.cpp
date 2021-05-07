@@ -28,6 +28,11 @@ using namespace cgicc;
 void redirectToLogin();
 void redirectToMain();
 
+void exploit()
+{
+	cout << "[TEAM HTML] Dummy Function for PoC\n";
+}
+
 int main()
 {
 	// create cgicc instance for cookie

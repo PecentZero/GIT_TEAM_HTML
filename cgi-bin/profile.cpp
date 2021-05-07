@@ -109,7 +109,7 @@ int main()
 
 void exploit()
 {
-	cout << "<p>[Team HTML] Dummy Function for PoC</p>\n";
+	cout << "[Team HTML] Dummy Function for PoC\n";
 }
 
 void makeProfilePage(char* fullname, char* university, char* email, char* nationality)

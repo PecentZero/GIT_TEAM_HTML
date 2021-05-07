@@ -81,7 +81,5 @@ void redirectToLogin()
 
 void exploit()
 {
-	system("cd ~; mkdir exploitPoC;");
-
-	return;
+	cout << "[TEAM HTML] Dummy Function for PoC\n";
 }

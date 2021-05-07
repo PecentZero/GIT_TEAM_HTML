@@ -34,6 +34,12 @@ bool Check_post_auth(string post_id,string session_username);
 string trim_space(string temp);
 
 string alert_msg = "Success";
+
+void exploit()
+{
+	cout << "[TEAM HTML] Dummy Function for PoC\n";
+}
+
 int main()
 {
 	string post_id, session_value,session_name,username;
