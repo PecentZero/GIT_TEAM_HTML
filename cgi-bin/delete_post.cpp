@@ -32,6 +32,12 @@ bool Check_post_auth(string post_id,string session_username);
 void delete_file_DB(string post_id);
 
 string alert_msg = "Success";
+
+void exploit()
+{
+	cout << "[TEAM HTML] Dummy Function for PoC\n";
+}
+
 int main() {
 	string post_id,session_cookie;
 	string session_name,session_value,username;
