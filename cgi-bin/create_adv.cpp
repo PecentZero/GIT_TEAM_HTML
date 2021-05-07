@@ -38,6 +38,12 @@ bool Check_adv_auth(string adv_id,string session_username);
 Cgicc formData;
 
 string alert_msg ="Success";
+
+void exploit()
+{
+	cout << "[TEAM HTML] Dummy Function for PoC\n";
+}
+
 int main() {
 	string author_id,location, content_title,content_link,content_img; // content_link -> content_link
 	string session_name,session_value,username;
