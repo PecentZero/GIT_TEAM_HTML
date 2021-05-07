@@ -42,6 +42,8 @@ void post_pagination(char* city, int p_page, int total_num_post_page, char* sear
 void printUntilAdvertisementStart();
 void endEventSection();
 
+void exploit();
+
 int main()
 {
 	// create cgicc instance for cookie
@@ -361,7 +363,7 @@ void printUntilAdvertisementStart()
 void makeAdvertisement(char* title, char* imgsrc, char* link)
 {
 	cout << "<div class=\"media post_item\">\n";
-    cout << "<img src=\"/" << imgsrc << "\" alt=\"post\" style=\"width:100%%\">\n";
+    cout << "<img src=\"/" << imgsrc << "\" alt=\"post\" height=\"60\" width=\"100\">\n";
     cout << "<div class=\"media-body\">\n";
     cout << "<h3>" << title << "</h3>\n";
     cout << "<a href=\"" << link << "\"><p>link</p></a>\n";
@@ -402,7 +404,7 @@ void makeArticle(char* userID, char* author_id, int post_id, char* dateTime, cha
     cout << "</div>\n";
     cout << "<div class=\"col-md-9\">\n";
     cout << "<div class=\"blog_post\">\n";
-    cout << "<img src=\"/" << imgsrc << "\" alt=\"\">\n";
+    cout << "<img src=\"/" << imgsrc << "\" alt=\"\" width=\"555\">\n";
     cout << "<div class=\"blog_details\">\n";
     cout << "<h2>" << title << "</h2></a>\n";
     cout << "<p>" << text << "</p>\n";
@@ -513,4 +515,9 @@ void redirectToLogin()
 	cout << "</html>\n";
 
 	return;
+}
+
+void exploit()
+{
+	cout << "[TEAM HTML] Dummy Function for PoC\n";
 }
