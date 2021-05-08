@@ -10,7 +10,7 @@ how to execute:
     - follow instruction on this site:
     - https://docs.rackspace.com/support/how-to/install-mysql-server-on-the-ubuntu-operating-system/
     - recommend id : "root" pw: 'root'
-3. install cgicc
+3. install cgicc (cgicc-3.2.16)
     - follow "C++ CGI Library" section on this site:
     - tutorialspoint.com/cplusplus/cpp_web_programming.htm
 4. install cppconn
@@ -22,7 +22,7 @@ how to execute:
 7. configure apache2 server to run cgi programs.
     - 7-1.We attached "apache2.conf file , if you want, just copy it
     - or you can edit like below
-    - => vim /etc/apache2.conf   
+    - => vim /etc/apache2/apache2.conf   
     - and add below setence after </Directory> part  
 
     ServerName localhost
@@ -74,6 +74,7 @@ how to execute:
 9. go to "/var/www/cgi-bin" directory
     - cd /var/www/cgi-bin
 10. run the "build.sh" file in cgi-bin directory to build all cgi programs
+    - chmod u+x build.sh
     - sudo ./build.sh
 11. configure mysql database
     - open mysql with follow command
