@@ -63,14 +63,14 @@ int main()
 
 	// if already logged in
 	// get the GET parameter for the city
-	char user_id[30];
+	char* user_id;
 	form_iterator fi = cgi.getElement("user_id");
 	if ( !fi->isEmpty() && fi != (*cgi).end()){
-		strcpy(user_id, strdup((**fi).c_str()));
+		user_id = strdup((**fi).c_str());
 	} else {
 		// nothing specified for the username
 		// default to the user's profile
-		strcpy(user_id, userID);
+		user_id = userID;
 	}
 
 	// get the data from the DB with key user_id as username
