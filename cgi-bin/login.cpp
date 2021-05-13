@@ -61,6 +61,7 @@ int main()
 	// check the length of userID
 	if (strlen(userID) > 50){
 		redirectToLoginWithAlert();	
+		return 0;
 	}
 
 	// get the POST parameter for the password
@@ -75,7 +76,8 @@ int main()
 	
 	// check the length of password
 	if (strlen(password) > 50){
-		redirectToLoginWithAlert();	
+		redirectToLoginWithAlert();
+		return 0;
 	}
 
 	sql::ResultSet *res;
