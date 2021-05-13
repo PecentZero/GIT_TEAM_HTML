@@ -57,6 +57,11 @@ int main()
 		// nothing specified for the city name
 		userID = "";
 	}
+	
+	// check the length of userID
+	if (strlen(userID) > 50){
+		redirectToLoginWithAlert();	
+	}
 
 	// get the POST parameter for the password
 	char* password;
@@ -67,10 +72,15 @@ int main()
 		// nothing specified for the post page
 		password = "";
 	}
+	
+	// check the length of password
+	if (strlen(password) > 50){
+		redirectToLoginWithAlert();	
+	}
 
 	sql::ResultSet *res;
 	sql::Statement *stmt;
-	char query[100] = "select * from user_auth where username=\'";
+	char query[300] = "select * from user_auth where username=\'";
 	strcat(query, userID);
 	strcat(query, "\' and password=sha2(\'");
 	strcat(query, password);
