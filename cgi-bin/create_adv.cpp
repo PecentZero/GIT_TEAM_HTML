@@ -407,12 +407,12 @@ bool Check_adv_auth(string adv_id,string session_username)
 				 {
 
 							adv_username = res->getString("author_id");
-
-							delete res;
-							delete pstmt;
+							
 
 									if(session_username == adv_username) //authentication
 									{
+										delete res;
+										delete pstmt;
 										delete con;
 									return true;
 								}
