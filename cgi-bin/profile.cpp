@@ -30,6 +30,7 @@ void profileFirstPart(char* fullname, char* university);
 void profileSubfunction(char* title, char* content);
 void redirectToMain();
 void redirectToLogin();
+void xss_escape(char* src, char* dest, int dest_length);
 void exploit();
 
 int main()
@@ -85,10 +86,21 @@ int main()
 	if (res->next())
 	{
 		// proper userid
-		char* fullname = strdup(res->getString("fullname").c_str());
-		char* university = strdup(res->getString("university").c_str());
-		char* email = strdup(res->getString("email").c_str());
-		char* nationality = strdup(res->getString("nationality").c_str());
+		char fullname[50];
+		char university[50];
+		char email[350];
+		char nationality[50];
+		char* fullname_input = strdup(res->getString("fullname").c_str());
+		char* university_input = strdup(res->getString("university").c_str());
+		char* email_input = strdup(res->getString("email").c_str());
+		char* nationality_input = strdup(res->getString("nationality").c_str());
+		
+		// convert user input to xss-safe values
+		xss_escape(fullname_input, fullname, 50);
+		xss_escape(university_input, university, 50);
+		xss_escape(email_input, email, 350);
+		xss_escape(nationality_input, nationality, 50);
+		
 		delete res;
 		delete pstmt;
 		// create the page
@@ -225,4 +237,34 @@ void profileSubfunction(char* title, char* content)
     cout << content;
     cout << "</div>\n";
     cout << "</div>\n";
+}
+
+void xss_escape(char* src, char* dest, int dest_length)
+{
+	// escaping the '<' is enough because we do not have any user input in a tag
+	int cur_position = 0;
+	for (int i = 0 ; i < strlen(src); i++)
+	{
+		if (cur_position >= dest_length - 5)
+		{
+			dest[cur_position] = '\0';
+			return;
+		}
+		if (src[i] == '<')
+		{
+			dest[cur_position] = '&';
+			dest[cur_position+1] = 'l';
+			dest[cur_position+2] = 't';
+			dest[cur_position+3] = ';';
+			cur_position += 4;
+		}
+		else
+		{
+			dest[cur_position] = src[i];
+			cur_position++;  
+		}
+	}
+	dest[cur_position] = '\0';
+
+	return;
 }
