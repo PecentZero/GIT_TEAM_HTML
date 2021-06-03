@@ -81,15 +81,13 @@ int main()
 	}
 
 	sql::ResultSet *res;
-	sql::Statement *stmt;
-	char query[300] = "select * from user_auth where username=\'";
-	strcat(query, userID);
-	strcat(query, "\' and password=sha2(\'");
-	strcat(query, password);
-	strcat(query, "\',512)");
-
-	stmt = con->createStatement();
-	res = stmt->executeQuery(query);
+	sql::PreparedStatement *pstmt_login;
+	string sql = "select * from user_auth where username = ? and password = sha2( ? , 512)";
+	pstmt_login = con->prepareStatement(sql);
+	pstmt_login->setString(1, userID);
+	pstmt_login->setString(2, password);
+	
+	res = pstmt_login->executeQuery();
 	if (res->next())
 	{
 		sql::PreparedStatement *pstmt_del;
@@ -100,7 +98,7 @@ int main()
 		char* newCookie = generate_cookie(20, con);
 		create_session(newCookie, userID, con);
 		delete res;
-		delete stmt;
+		delete pstmt_login;
 		delete pstmt_del;
 		delete con;
 		redirectToMainWithCookie(newCookie);
@@ -108,7 +106,7 @@ int main()
 	}
 
 	delete res;
-	delete stmt;
+	delete pstmt_login;
 	delete con;
 	redirectToLoginWithAlert();
 
