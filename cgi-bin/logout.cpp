@@ -30,7 +30,6 @@ void exploit();
 
 int main()
 {
-	char cookie[30];
 	// create cgicc instance for cookie
 	Cgicc cgi;
 	const_cookie_iterator cci;
@@ -45,7 +44,7 @@ int main()
 	// get the cookie value
 	const CgiEnvironment& env = cgi.getEnvironment();
 	cci = env.getCookieList().begin();
-	strcpy(cookie,strdup((cci->getValue()).c_str()));
+	char* cookie = strdup((cci->getValue()).c_str());
 
 
 	// delete the session
