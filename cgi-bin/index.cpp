@@ -42,6 +42,8 @@ void post_pagination(char* city, int p_page, int total_num_post_page, char* sear
 void printUntilAdvertisementStart();
 void endEventSection();
 
+void xss_escape(char* src, char* dest, int dest_length);
+
 void exploit();
 
 int main()
@@ -287,14 +289,26 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 	int count = 0;
 	while (res_post->next() && count < 10)
 	{
-		char* author_id = strdup((res_post->getString("author_id")).c_str());
+		char author_id[50];
+		char location[30];
+		char title[60];
+		char text[1034];
+		
+		char* input_author_id = strdup((res_post->getString("author_id")).c_str());
 		int post_id = res_post->getInt("post_id");
 		char* dateTime = strdup((res_post->getString("time_written")).c_str());
-		char* location = strdup((res_post->getString("location")).c_str());
+		char* input_location = strdup((res_post->getString("location")).c_str());
 		//int likes = strdup((res_post->getInt("likes")).c_str());
 		char* imgsrc = strdup((res_post->getString("content_img")).c_str());
-		char* title = strdup((res_post->getString("content_title")).c_str());
-		char* text = strdup((res_post->getString("content_text")).c_str());
+		char* input_title = strdup((res_post->getString("content_title")).c_str());
+		char* input_text = strdup((res_post->getString("content_text")).c_str());
+		
+		// convert user input to xss-safe values
+		xss_escape(input_author_id, author_id, 50);
+		xss_escape(input_location, location, 30);
+		xss_escape(input_title, title, 60);
+		xss_escape(input_text, text, 1034);
+		
 		makeArticle(userID, author_id, post_id, dateTime, location, imgsrc, title, text);
 
 		count++;
@@ -320,10 +334,17 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 	// print maximum 10 advertisements
 	while (res_adv->next() && count < 10)
 	{
+		char title_adv[60];
+		char link[210];
+		
 		char* author_id = strdup((res_adv->getString("author_id")).c_str());
 		char* imgsrc = strdup((res_adv->getString("content_img")).c_str());
-		char* title = strdup((res_adv->getString("content_title")).c_str());
-		char* link = strdup((res_adv->getString("content_link")).c_str());
+		char* input_title_adv = strdup((res_adv->getString("content_title")).c_str());
+		char* input_link = strdup((res_adv->getString("content_link")).c_str());
+		
+		// escape XSS characters
+		xss_escape(input_title_adv, title_adv, 60);
+		xss_escape(input_link, link, 210);
 
 		makeAdvertisement(title, imgsrc, link);
 
@@ -513,6 +534,36 @@ void redirectToLogin()
 	cout << "<script> window.location.href = \"/login.html\"; </script>\n";
 	cout << "</body>\n";
 	cout << "</html>\n";
+
+	return;
+}
+
+void xss_escape(char* src, char* dest, int dest_length)
+{
+	// escaping the '<' is enough because we do not have any user input in a tag
+	int cur_position = 0;
+	for (int i = 0 ; i < strlen(src); i++)
+	{
+		if (cur_position >= dest_length - 5)
+		{
+			dest[cur_position] = '\0';
+			return;
+		}
+		if (src[i] == '<')
+		{
+			dest[cur_position] = '&';
+			dest[cur_position+1] = 'l';
+			dest[cur_position+2] = 't';
+			dest[cur_position+3] = ';';
+			cur_position += 4;
+		}
+		else
+		{
+			dest[cur_position] = src[i];
+			cur_position++;  
+		}
+	}
+	dest[cur_position] = '\0';
 
 	return;
 }
