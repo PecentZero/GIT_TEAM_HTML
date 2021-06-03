@@ -346,7 +346,7 @@ void printEventsArea(char* userID, char* city, int p_page, char* search, sql::Co
 		xss_escape(input_title_adv, title_adv, 60);
 		xss_escape(input_link, link, 210);
 
-		makeAdvertisement(title, imgsrc, link);
+		makeAdvertisement(title_adv, imgsrc, link);
 
 		count++;
 	}
