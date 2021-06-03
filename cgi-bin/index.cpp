@@ -62,9 +62,9 @@ int main()
 	cci = env.getCookieList().begin();
 
 	// check the session
-	char cookie[30];
+	char* cookie;
 	int sessionOK = 0;
-	strcpy(cookie, strdup((cci->getValue()).c_str()));
+	cookie = strdup((cci->getValue()).c_str());
 	char* userID = session_check(cookie, con);
 	if (userID != NULL)
 	{
