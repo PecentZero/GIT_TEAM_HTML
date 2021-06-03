@@ -71,13 +71,13 @@ int main()
 	}
 
 	// get the POST parameter university
-	char university[30];
+	char* university;
 	fi = cgi.getElement("university");
 	if ( !fi->isEmpty() && fi != (*cgi).end()){
-		strcpy(university,strdup((**fi).c_str()));
+		university = strdup((**fi).c_str());
 	} else {
 		// nothing specified for the city name
-		strcpy(university, "");
+		university = "";
 	}
 
 	// create a mysql connection
